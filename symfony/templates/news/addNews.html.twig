@@ -1,0 +1,64 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    Adding New News
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        form,
+        .alert {
+            width: 100%;
+            max-width: 600px !important;
+            margin: 0 auto;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <main class="h-auto bg-light d-flex flex-column justify-content-start align-items-center">
+        <div class="wrapper w-100 bg-white p-5 border-bottom border-dark d-flex flex-column justify-content-end">
+            <h1 class="text-center">
+                <span class="welcome-text">Adding New News</span>
+            </h1>
+        </div>
+
+        <div class="wrapper w-100 h-auto py-5 news-list bg-secondary">
+            {% for flash in app.session.flashbag.get('success') %}
+                <div class="alert alert-success">Saved new news</div>
+            {% endfor %}
+
+            <div class="container">
+                <div class="row d-flex flex-wrap justify-content-center align-items-center p-4 text-white">
+                    {{ form_start(news_form) }}
+                        <div class="form-group">
+                            {{ form_label(news_form.title, 'Title news') }}
+                            {{ form_widget(news_form.title, {'attr': {'class': 'form-control', 'placeholder': 'Title news'}}) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(news_form.category, 'Category news') }}
+                            {{ form_widget(news_form.category, {'attr': {'class': 'form-control'}}) }}
+                            <small class="form-text text-white">This field is optional</small>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(news_form.news, 'Content') }}
+                            {{ form_widget(news_form.news, {'attr': {'class': 'form-control', 'rows': '8', 'placeholder': 'Content'}}) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_widget(news_form.active, {'attr': {'class': 'form-check-label'}}) }}
+                            {{ form_label(news_form.active) }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(news_form.submit) }}
+                            {{ form_widget(news_form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
+                        </div>
+                    {{ form_end(news_form) }}
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    News List
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .news-list a {
+            width: 30%;
+            text-decoration: none;
+            border-radius: 15px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <main class="h-auto bg-light d-flex flex-column justify-content-start align-items-center">
+        <div class="wrapper w-100 bg-white p-5 border-bottom border-dark">
+            <h1 class="text-center">
+                <span class="welcome-text">News List</span>
+            </h1>
+        </div>
+
+        <div class="wrapper w-100 my-5 news-list">
+            <div class="container">
+                {% for category in category_list %}
+                    <h6 class="text-dark pb-3 pl-2 my-3 border-bottom border-secondary"><i><b>Category: </b>
+                            {% if category.name is defined %}
+                                {{ category.name }}
+                            {% endif %}
+                        </i></h6>
+                    <div class="row d-flex flex-wrap justify-content-start">
+                        {% for news in news_list %}
+                            {% if news.category.name is defined %}
+                                {% if (category.name == news.category.name) %}
+                                    <a href="{{ path('news_item', { id: news.id }) }}"
+                                       class="d-block bg-info p-3 m-3 col-lg-3 col-md-5 col-10">
+                                        <h3 class="text-dark">{{ news.title }}</h3>
+                                        <span class="text-white">{{ news.news|slice(0, 50) }}...</span>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <h6 class="text-dark pb-3 pl-2 my-3 border-bottom border-secondary"><i><b>No category</b></i></h6>
+
+                <div class="row d-flex flex-wrap justify-content-start">
+                    {% for news in news_list %}
+                        {% if news.category.name is not defined %}
+                            <a href="{{ path('news_item', { id: news.id }) }}"
+                               class="d-block bg-info p-3 m-3 col-lg-3 col-md-5 col-10">
+                                <h3 class="text-dark">{{ news.title }}</h3>
+                                <span class="text-white">{{ news.news|slice(0, 50) }}...</span>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

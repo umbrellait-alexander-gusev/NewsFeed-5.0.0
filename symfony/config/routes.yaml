@@ -1,0 +1,11 @@
+controllers:
+  resource: '../src/Controller/'
+  type:     annotation
+
+home:
+  path: /
+  controller: App\Controller\DefaultController::indexAction
+
+news:
+  path: /news_list
+  controller: App\Controller\NewsController::newsListAction

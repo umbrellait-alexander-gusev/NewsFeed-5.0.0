@@ -1,0 +1,36 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    News &#8470; {{ one_news.title }}
+{% endblock %}
+
+{% block body %}
+    <main class="h-100 bg-light d-flex flex-column justify-content-start align-items-center">
+        <h6 class="w-100 text-dark pb-3 pl-2 my-3 border-bottom border-secondary"><i>
+                {% if one_news.category.name is defined %}
+                    <b>Category: </b>{{ one_news.category.name }}
+                {% else %}
+                    <b>No category</b>
+                {% endif %}
+            </i></h6>
+
+        <div class="wrapper w-100 bg-white p-5 border-bottom border-dark d-flex flex-column justify-content-end">
+            <h1 class="text-center">
+                <span class="welcome-text">{{ one_news.title }}</span>
+            </h1>
+
+            <div class="wrapper d-flex justify-content-end">
+                <a href="{{ path('news') }}" class="btn btn-secondary btn-lg" role="button" aria-pressed="true">&larr;
+                    Back</a>
+            </div>
+        </div>
+
+        <div class="wrapper mt-5 news-list bg-info">
+            <div class="container">
+                <div class="row d-flex flex-wrap justify-content-center align-items-center p-4 text-white">
+                    <p>{{ one_news.news }}</p>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

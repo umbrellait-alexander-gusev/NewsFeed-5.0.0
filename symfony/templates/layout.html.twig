@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html class="h-100">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="stylesheet" href="{{ asset('libs/bootstrap-4.3.1/css/bootstrap.min.css') }}">
+        {% block stylesheets %}{% endblock %}
+    </head>
+
+    <body class="h-100">
+        <div id="wrapper-content"  class="h-100 d-flex flex-column justify-content-between">
+            <header>
+                <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
+                    <a class="navbar-brand m-0" href="{{ path('home') }}">
+                        <h2 class="navbar-text font-weight-bold p-0 m-0">News feed</h2>
+                    </a>
+
+                    <button class="navbar-toggler"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#navbarNavDropdown"
+                            aria-controls="navbarNavDropdown"
+                            aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                        <ul class="navbar-nav mr-0 ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('home') }}">Home</a>
+                            </li>
+                            &#8228;
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('news') }}">News List</a>
+                            </li>
+                            &#8228;
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('add_news') }}">Adding New News</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+
+            {% block body %}{% endblock %}
+
+            <footer class="navbar navbar-light bg-dark d-flex justify-content-center">
+                <div class="wrapper-footer w-100 text-center">
+                  <span class="navbar-text text-white font-weight-bold mr-2">
+                    &copy; 2019 Copyright:
+                  </span>
+
+                    <a class="text-primary navbar-text font-weight-bold"
+                       href="https://vk.com/gusev_alexandr_vladimirovich/">
+                        AlexanderWeb
+                    </a>
+                </div>
+            </footer>
+        </div>
+
+        <script src="{{ asset('libs/jquery-3.4.1/jquery.min.js') }}" ></script>
+        <script src="{{ asset('libs/bootstrap-4.3.1/js/bootstrap.min.js') }}" ></script>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>
