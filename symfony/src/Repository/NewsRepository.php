@@ -28,4 +28,22 @@ class NewsRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getCountNewsByCategory($categoryId)
+    {
+        if (is_null($categoryId)) {
+            return $this
+                ->createQueryBuilder('news')
+                ->where('news.category is NULL')
+                ->getQuery()
+                ->getResult();
+        }
+
+        return $this
+            ->createQueryBuilder('news')
+            ->where('news.category = :category')
+            ->setParameter('category', $categoryId)
+            ->getQuery()
+            ->getResult();
+    }
 }

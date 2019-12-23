@@ -22,7 +22,7 @@ class News
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(columnDefinition="longtext")
      */
     private $news;
 
@@ -82,7 +82,7 @@ class News
         return $this->category;
     }
 
-    public function setCategory(?int $category): self
+    public function setCategory($category): self
     {
         $this->category = $category;
 

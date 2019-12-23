@@ -1,11 +1,7 @@
-controllers:
+app_controllers:
   resource: '../src/Controller/'
-  type:     annotation
+  type: annotation
 
-home:
-  path: /
-  controller: App\Controller\DefaultController::indexAction
-
-news:
-  path: /news_list
-  controller: App\Controller\NewsController::newsListAction
+admin_controllers:
+  resource: '../src/Bundle/AdminBundle/Controller/'
+  type: annotation

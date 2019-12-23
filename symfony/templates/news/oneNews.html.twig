@@ -1,14 +1,14 @@
 {% extends 'layout.html.twig' %}
 
 {% block title %}
-    News &#8470; {{ one_news.title }}
+    News &#8470; {{ oneNews.title }}
 {% endblock %}
 
 {% block body %}
     <main class="h-100 bg-light d-flex flex-column justify-content-start align-items-center">
         <h6 class="w-100 text-dark pb-3 pl-2 my-3 border-bottom border-secondary"><i>
-                {% if one_news.category.name is defined %}
-                    <b>Category: </b>{{ one_news.category.name }}
+                {% if oneNews.category.name is defined %}
+                    <b>Category: </b>{{ oneNews.category.name }}
                 {% else %}
                     <b>No category</b>
                 {% endif %}
@@ -16,7 +16,7 @@
 
         <div class="wrapper w-100 bg-white p-5 border-bottom border-dark d-flex flex-column justify-content-end">
             <h1 class="text-center">
-                <span class="welcome-text">{{ one_news.title }}</span>
+                <span class="welcome-text">{{ oneNews.title }}</span>
             </h1>
 
             <div class="wrapper d-flex justify-content-end">
@@ -28,7 +28,7 @@
         <div class="wrapper mt-5 news-list bg-info">
             <div class="container">
                 <div class="row d-flex flex-wrap justify-content-center align-items-center p-4 text-white">
-                    <p>{{ one_news.news }}</p>
+                    <p>{{ oneNews.news }}</p>
                 </div>
             </div>
         </div>
