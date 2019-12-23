@@ -41,12 +41,12 @@ down:
 	$(DOWN) -v --remove-orphans
 	$(MAKE) status
 
-start:
+up:
 	$(UP) -d
 	$(MAKE) status
 
-start-node:
-start-%:
+up-node:
+up-%:
 	$(UP) -d $*
 	$(MAKE) status
 
