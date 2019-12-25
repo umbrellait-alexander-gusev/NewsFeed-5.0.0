@@ -4,6 +4,7 @@ namespace App\Bundle\AdminBundle\Controller;
 
 use App\Form\NewsType;
 use ArrayObject;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -21,8 +22,11 @@ class AdminNewsController extends AbstractController
      * Get news list
      *
      * @Route("/news_list", name="admin_news_list")
+     * @param Request $request
+     * @param PaginatorInterface $knpPaginator
+     * @return Response
      */
-    public function getNewsList()
+    public function getNewsList(Request $request, PaginatorInterface $knpPaginator)
     {
         $news = $this
         ->getDoctrine()
@@ -40,8 +44,14 @@ class AdminNewsController extends AbstractController
             $categoryList[$newsId] = $categoryName;
         }
 
+        $pagination = $knpPaginator->paginate(
+            $newsList,
+            $request->query->getInt('page', 1),
+            10
+        );
+
         return $this->render('admin/news/newsList.html.twig', [
-            'newsList' => $newsList,
+            'newsList' => $pagination,
             'categoryList' => $categoryList,
         ]);
     }
