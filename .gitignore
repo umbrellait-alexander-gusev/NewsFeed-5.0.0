@@ -5,4 +5,3 @@ symfony/.env
 symfony/public/bundles/
 symfony/var/
 symfony/vendor/
-logs
