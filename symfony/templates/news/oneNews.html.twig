@@ -17,9 +17,9 @@
         <div class="wrapper w-100 bg-white p-5 border-bottom border-dark d-flex flex-column justify-content-end">
             <div class="wrapper d-flex justify-content-end">
                 {% if nameCategoryBackPage is null %}
-                    <a href="{{ path('news') }}" class="btn btn-secondary btn-lg" role="button" aria-pressed="true">&larr;Back</a>
+                    <a href="{{ path('news') }}" class="btn btn-secondary btn-lg" role="button" aria-pressed="true">&larr; Back</a>
                 {% else %}
-                    <a href="{{ path('news', {queryCategoryName: nameCategoryBackPage}) }}" class="btn btn-secondary btn-lg" role="button" aria-pressed="true">&larr;Back</a>
+                    <a href="{{ path('news', {queryCategoryName: nameCategoryBackPage}) }}" class="btn btn-secondary btn-lg" role="button" aria-pressed="true">&larr; Back</a>
                 {% endif %}
             </div>
 

@@ -61,7 +61,7 @@
         {% else %}
             <div class="wrapper w-100 h-100 my-5 news-list">
                 <div class="container">
-                    <div class="row d-flex flex-wrap justify-content-center">
+                    <div class="row d-flex flex-wrap justify-content-start">
                         {% for news in newsListForCategory %}
                             <a href="{{ path('one_news', { id: news.id, queryCategoryName: categoryPageName}) }}"
                                class="d-block bg-info p-3 m-3 col-lg-3 col-md-5 col-10">
@@ -71,6 +71,10 @@
                         {% endfor %}
                     </div>
                 </div>
+            </div>
+
+            <div class="navigation mt-5 mx-auto">
+                {{ knp_pagination_render(newsListForCategory) }}
             </div>
         {% endif %}
     </main>

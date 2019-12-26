@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -12,9 +13,10 @@ class NewsController extends AbstractController
     /**
      * @Route("/news_list", name="news")
      * @param Request $request
+     * @param PaginatorInterface $knpPaginator
      * @return ResponseAlias
      */
-    public function getNewsList(Request $request)
+    public function getNewsList(Request $request, PaginatorInterface $knpPaginator)
     {
         $news = $this
             ->getDoctrine()
@@ -59,6 +61,13 @@ class NewsController extends AbstractController
             $queryCategoryName = $request->query->get('queryCategoryName');
             if (isset($queryCategoryName)) {
                 $newsListForCategory = $newsListForCategory[$queryCategoryName];
+
+                $newsListForCategory = $knpPaginator->paginate(
+                    $newsListForCategory,
+                    $request->query->getInt('page', 1),
+                    9
+                );
+
                 $oneCategoryPage = true;
                 $titlePage = 'News category: ' . $queryCategoryName;
                 $categoryPageName = $queryCategoryName;
