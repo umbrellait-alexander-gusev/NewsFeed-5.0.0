@@ -6,7 +6,7 @@
 
 {% block body %}
     <main class="h-100 bg-light d-flex flex-column justify-content-start align-items-center">
-        <h6 class="w-100 text-dark pb-3 pl-2 my-3 border-bottom border-secondary"><i>
+        <h6 class="w-100 text-dark p-3 pl-2 my-0 border-bottom border-secondary"><i>
                 {% if oneNews.category.name is defined %}
                     <b>Category: </b>{{ oneNews.category.name }}
                 {% else %}
@@ -15,17 +15,18 @@
             </i></h6>
 
         <div class="wrapper w-100 bg-white p-5 border-bottom border-dark d-flex flex-column justify-content-end">
+            <div class="wrapper d-flex justify-content-end">
+                <a href="{{ path('news') }}" class="btn btn-secondary btn-lg" role="button" aria-pressed="true">&larr;Back</a>
+            </div>
+
+
             <h1 class="text-center">
                 <span class="welcome-text">{{ oneNews.title }}</span>
             </h1>
-
-            <div class="wrapper d-flex justify-content-end">
-                <a href="{{ path('news') }}" class="btn btn-secondary btn-lg" role="button" aria-pressed="true">&larr;
-                    Back</a>
-            </div>
         </div>
 
-        <div class="wrapper mt-5 news-list bg-info">
+{#        <div class="d-flex flex-column justify-content-start wrapper w-80 h-100 p-3 mx-auto news-list bg-info">#}
+        <div class="wrapper w-100 h-100 p-3 d-flex flex-column justify-content-start bg-info">
             <div class="container">
                 <div class="row d-flex flex-wrap justify-content-center align-items-center p-4 text-white">
                     <p>{{ oneNews.news }}</p>
