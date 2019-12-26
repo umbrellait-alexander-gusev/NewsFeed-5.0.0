@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block body %}
-    <main class="h-auto bg-light d-flex flex-column justify-content-start align-items-center">
+    <main class="{% if oneCategoryPage == true %}h-100{% else %}h-auto{% endif %} bg-light d-flex flex-column justify-content-start align-items-center">
         <div class="wrapper w-100 bg-white p-5 border-bottom border-dark">
             {% if oneCategoryPage == true %}
                 <div class="wrapper d-flex justify-content-end">
