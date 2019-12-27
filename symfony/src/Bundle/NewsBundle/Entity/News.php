@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Entity;
+namespace App\Bundle\NewsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\NewsRepository")
+ * @ORM\Entity(repositoryClass="App\Bundle\NewsBundle\Repository\NewsRepository")
  */
 class News
 {
@@ -27,7 +27,7 @@ class News
     private $news;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Category")
+     * @ORM\ManyToOne(targetEntity="App\Bundle\NewsBundle\Entity\Category")
      */
     private $category;
 

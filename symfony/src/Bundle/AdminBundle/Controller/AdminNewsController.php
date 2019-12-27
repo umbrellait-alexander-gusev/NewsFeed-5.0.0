@@ -2,8 +2,9 @@
 
 namespace App\Bundle\AdminBundle\Controller;
 
-use App\Form\NewsType;
+use App\Bundle\NewsBundle\Form\NewsType;
 use ArrayObject;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -18,20 +19,34 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AdminNewsController extends AbstractController
 {
+    private $entityManager;
+    private $knpPaginator;
+    private $news;
+    private $category;
+
+    /**
+     * Class constructor
+     * @param EntityManagerInterface $entityManager
+     * @param PaginatorInterface $knpPaginator
+     */
+    public function __construct(EntityManagerInterface $entityManager, PaginatorInterface $knpPaginator)
+    {
+        $this->entityManager = $entityManager;
+        $this->knpPaginator = $knpPaginator;
+        $this->news = $this->entityManager->getRepository('NewsBundle:News');
+        $this->category = $this->entityManager->getRepository('NewsBundle:Category');
+    }
+
     /**
      * Get news list
      *
      * @Route("/news_list", name="admin_news_list")
      * @param Request $request
-     * @param PaginatorInterface $knpPaginator
      * @return Response
      */
-    public function getNewsList(Request $request, PaginatorInterface $knpPaginator)
+    public function getNewsList(Request $request)
     {
-        $news = $this
-        ->getDoctrine()
-        ->getRepository('App:News');
-        $newsList = $news->findAll();
+        $newsList = $this->news->findAll();
         $categoryList = [];
 
         foreach ($newsList as $news) {
@@ -44,7 +59,7 @@ class AdminNewsController extends AbstractController
             $categoryList[$newsId] = $categoryName;
         }
 
-        $pagination = $knpPaginator->paginate(
+        $pagination = $this->knpPaginator->paginate(
             $newsList,
             $request->query->getInt('page', 1),
             10
@@ -65,10 +80,7 @@ class AdminNewsController extends AbstractController
      */
     public function addNews(Request $request)
     {
-        $categories = $this
-            ->getDoctrine()
-            ->getRepository('App:Category')
-            ->findAll();
+        $categories = $this->category->findAll();
 
         $categoryChoices = new ArrayObject();
         foreach ($categories as $category) {
@@ -115,15 +127,8 @@ class AdminNewsController extends AbstractController
      */
     public function editNews(Request $request, $id)
     {
-        $news = $this
-            ->getDoctrine()
-            ->getRepository('App:News')
-            ->find($id);
-
-        $categories = $this
-            ->getDoctrine()
-            ->getRepository('App:Category')
-            ->findAll();
+        $newsById = $this->news->find($id);
+        $categories = $this->category->findAll();
 
         $categoryChoices = new ArrayObject();
         foreach ($categories as $category) {
@@ -133,7 +138,7 @@ class AdminNewsController extends AbstractController
         $categoryChoices->offsetSet('No category', null);
         $categoryList = ['choices' => $categoryChoices];
 
-        $form = $this->createForm(NewsType::class, $news);
+        $form = $this->createForm(NewsType::class, $newsById);
         $form->add('category', ChoiceType::class, $categoryList);
         $form->add('submit', SubmitType::class);
         $form->handleRequest($request);
@@ -156,7 +161,7 @@ class AdminNewsController extends AbstractController
 
         return $this->render('admin/news/editNews.html.twig', [
             'newsForm' => $form->createView(),
-            'news' => $news,
+            'news' => $newsById,
         ]);
     }
 
@@ -164,23 +169,19 @@ class AdminNewsController extends AbstractController
      * Delete news
      *
      * @Route("/delete_news/{id}", name="admin_delete_news")
-     * @param Request $request
      * @param $id
      * @return RedirectResponse
      */
-    public function deleteNews(Request $request, $id)
+    public function deleteNews($id)
     {
-        $news = $this
-            ->getDoctrine()
-            ->getRepository('App:News')
-            ->find($id);
+        $newsById = $this->news->find($id);
 
-        if (!$news) {
+        if (!$newsById) {
             throw $this->createNotFoundException('News not found');
         }
 
         $em = $this->getDoctrine()->getManager();
-        $em->remove($news);
+        $em->remove($newsById);
         $em->flush();
 
         $this->addFlash('success', 'News deleted');
@@ -196,19 +197,16 @@ class AdminNewsController extends AbstractController
      */
     public function changeActiveNews(int $id, $active)
     {
-        $news = $this
-            ->getDoctrine()
-            ->getRepository('App:News')
-            ->find($id);
+        $newsById = $this->news->find($id);
 
-        if (!$news) {
+        if (!$newsById) {
             throw $this->createNotFoundException('News not found');
         }
 
-        $news->setActive($active == 'true');
+        $newsById->setActive($active == 'true');
 
         $em = $this->getDoctrine()->getManager();
-        $em->persist($news);
+        $em->persist($newsById);
         $em->flush();
 
         $this->addFlash('change', 'This is a success change!');

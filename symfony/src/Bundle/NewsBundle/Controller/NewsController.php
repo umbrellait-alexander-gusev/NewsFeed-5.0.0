@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Controller;
+namespace App\Bundle\NewsBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,22 +11,33 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class NewsController extends AbstractController
 {
+    private $entityManager;
+    private $knpPaginator;
+    private $news;
+    private $category;
+
+    /**
+     * Class constructor
+     * @param EntityManagerInterface $entityManager
+     * @param PaginatorInterface $knpPaginator
+     */
+    public function __construct(EntityManagerInterface $entityManager, PaginatorInterface $knpPaginator)
+    {
+        $this->entityManager = $entityManager;
+        $this->knpPaginator = $knpPaginator;
+        $this->news = $this->entityManager->getRepository('NewsBundle:News');
+        $this->category = $this->entityManager->getRepository('NewsBundle:Category');
+    }
+
     /**
      * @Route("/news_list", name="news")
      * @param Request $request
-     * @param PaginatorInterface $knpPaginator
      * @return ResponseAlias
      */
-    public function getNewsList(Request $request, PaginatorInterface $knpPaginator)
+    public function getNewsList(Request $request)
     {
-        $news = $this
-            ->getDoctrine()
-            ->getRepository('App:News')
-            ->findActive();
-
-        $category = $this->getDoctrine()
-            ->getRepository('App:Category')
-            ->findAll();
+        $activeNews = $this->news->findActive();
+        $categories = $this->category->findAll();
 
         $newsListForCategory = [];
         // Need for title template
@@ -35,10 +47,10 @@ class NewsController extends AbstractController
         // Need for query parameter link
         $categoryPageName = '';
 
-        foreach ($category as $categoryItem) {
+        foreach ($categories as $categoryItem) {
             $categoryName = $categoryItem->getName();
 
-            foreach ($news as $newsKey => $newsItem) {
+            foreach ($activeNews as $newsKey => $newsItem) {
                 $newsCategoryObj = $newsItem->getCategory();
 
                 if (isset($newsCategoryObj)) {
@@ -52,7 +64,7 @@ class NewsController extends AbstractController
         }
 
         // That the category 'No category' was always at the end of the list
-        foreach ($news as $newsKey => $newsItem) {
+        foreach ($activeNews as $newsKey => $newsItem) {
             $newsCategoryObj = $newsItem->getCategory();
             if (!isset($newsCategoryObj))  $newsListForCategory['No category'][$newsKey] = $newsItem;
         }
@@ -62,7 +74,7 @@ class NewsController extends AbstractController
             if (isset($queryCategoryName)) {
                 $newsListForCategory = $newsListForCategory[$queryCategoryName];
 
-                $newsListForCategory = $knpPaginator->paginate(
+                $newsListForCategory = $this->knpPaginator->paginate(
                     $newsListForCategory,
                     $request->query->getInt('page', 1),
                     9
@@ -83,32 +95,25 @@ class NewsController extends AbstractController
     }
 
     /**
-     * @Route("/one_news/{id}", name="one_news")
+     * @Route("/one_news/{id}/{queryCategoryName}", name="one_news")
      * @param Request $request
      * @param $id
+     * @param $queryCategoryName
      * @return ResponseAlias
      */
-    public function getOneNews(Request $request, $id)
+    public function getOneNews(Request $request, $id, $queryCategoryName)
     {
-        $news = $this
-            ->getDoctrine()
-            ->getRepository('App:News')
-            ->find($id);
+        $newsById = $this->news->find($id);
 
-        if (!$news) {
+        if (!$newsById) {
             throw $this->createNotFoundException('News not found');
         }
 
         $nameCategoryBackPage = null;
-        if (count($request->query) > 0) {
-            $queryCategoryName = $request->query->get('queryCategoryName');
-            if (isset($queryCategoryName)) {
-                $nameCategoryBackPage = $queryCategoryName;
-            }
-        }
+        if ($queryCategoryName != 'All Category') $nameCategoryBackPage = $queryCategoryName;
 
         return $this->render('news/oneNews.html.twig', [
-            'oneNews' => $news,
+            'oneNews' => $newsById,
             'nameCategoryBackPage' => $nameCategoryBackPage,
         ]);
     }

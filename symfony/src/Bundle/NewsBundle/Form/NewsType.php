@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Form;
+namespace App\Bundle\NewsBundle\Form;
 
-use App\Entity\News;
+use App\Bundle\NewsBundle\Entity\News;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;

@@ -5,3 +5,7 @@ app_controllers:
 admin_controllers:
   resource: '../src/Bundle/AdminBundle/Controller/'
   type: annotation
+
+news_controllers:
+  resource: '../src/Bundle/NewsBundle/Controller/'
+  type: annotation
