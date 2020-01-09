@@ -1,11 +1,11 @@
 {% extends 'layout.html.twig' %}
 
 {% block title %}
-    News &#8470; {{ oneNews.title }}
+    {{ oneNews.title }}
 {% endblock %}
 
 {% block body %}
-    <main class="h-100 bg-light d-flex flex-column justify-content-start align-items-center">
+    <main class="h-auto bg-light d-flex flex-column justify-content-start align-items-center">
         <h6 class="w-100 text-dark p-3 m-0 border-bottom border-secondary"><i>
                 {% if oneNews.category.name is defined %}
                     <b>Category: </b>{{ oneNews.category.name }}
@@ -28,11 +28,18 @@
             </h1>
         </div>
 
-        <div class="wrapper w-100 h-100 p-3 d-flex flex-column justify-content-start bg-info">
+        <div style="min-height: 400px" class="wrapper w-100 h-100 p-3 d-flex flex-column justify-content-start bg-info">
             <div class="container">
-                <div class="row d-flex flex-wrap justify-content-center align-items-center p-4 text-white">
+                <div class="row d-flex flex-wrap justify-content-start align-items-center p-4 text-white">
                     <p>{{ oneNews.news }}</p>
                 </div>
+            </div>
+        </div>
+
+        <div class=" w-100 comment-list px-3 mt-3 mb-5 d-flex flex-column justify-content-start align-items-baseline">
+            <div class="container">
+                <h3 class="pb-2">Comments list</h3>
+                {{ block("comment", "news/commentsNews.html.twig") }}
             </div>
         </div>
     </main>

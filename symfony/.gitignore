@@ -14,3 +14,7 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+../logs/*
+../logs/nginx/access.log
+../logs/nginx/error.log

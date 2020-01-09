@@ -5,3 +5,6 @@ symfony/.env
 symfony/public/bundles/
 symfony/var/
 symfony/vendor/
+logs/*
+logs/nginx/access.log
+logs/nginx/error.log

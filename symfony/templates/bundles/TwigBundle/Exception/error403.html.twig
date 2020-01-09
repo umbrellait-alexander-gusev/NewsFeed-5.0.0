@@ -1,0 +1,25 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    403 Not Found
+{% endblock %}
+
+{% block body %}
+    <main class="bg-light d-flex flex-column justify-content-center align-items-center h-100">
+        <div class="form-block page-not-found-text">
+            <div class="container">
+                <div class="row">
+                    <div class="error-template d-flex flex-column align-items-center">
+                        <h1>Oops!</h1>
+                        <h2>403 Not Found</h2>
+                        <div class="error-details">You may not have the appropriate rights to view this page.</div>
+                        <div class="error-details pb-5">Request access rights or log in as another user who has rights.</div>
+                        <a href="{{ path('app_login') }}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">
+                            Log in
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
