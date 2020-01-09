@@ -4684,3 +4684,4 @@
 172.22.0.1 - - [09/Jan/2020:07:25:07 +0000] "GET /admin HTTP/1.1" 200 1151 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
 172.22.0.1 - - [09/Jan/2020:07:25:34 +0000] "GET /admin/news_list HTTP/1.1" 200 2352 "http://localhost/admin" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
 172.22.0.1 - - [09/Jan/2020:07:26:18 +0000] "GET /news_list HTTP/1.1" 200 1690 "http://localhost/one_news/39/All%20Category" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
+172.22.0.1 - - [09/Jan/2020:07:47:29 +0000] "GET /one_news/39/All%20Category HTTP/1.1" 200 1436 "http://localhost/news_list" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
