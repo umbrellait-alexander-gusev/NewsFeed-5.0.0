@@ -96,3 +96,6 @@ etc-files:
 	echo "root:x:0:0:root:/root:/bin/bash\nnobody:x:1:1:nobody:/:/bin/bash\nhost:x:$(CURRENT_UID):$(CURRENT_GID):host:/home/host:/bin/bash" > assets/passwd
 	touch assets/group
 	echo "root:x:0:\nnobody:x:1:\nhost:x:$(CURRENT_GID):" > assets/group
+
+schema-update:
+	$(EXEC) php sh -c "cd /var/www/symfony/ && bin/console doctrine:schema:update --force"
