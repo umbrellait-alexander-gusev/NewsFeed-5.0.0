@@ -38,17 +38,24 @@
                                 <a class="nav-link text-warning" href="{{ path('news') }}">News List</a>
                             </li>
 
-                            <li class="d-flex justify-content-center align-items-center text-warning">|</li>
-
                             {% if is_granted('IS_AUTHENTICATED_FULLY') == 'true' %}
+                                <li class="d-flex justify-content-center align-items-center text-light">|</li>
+
                                 <li class="nav-item d-flex justify-content-center align-items-center">
-                                    <span class="px-1 text-warning">Welcome: </span>
+                                    <span class="px-1 text-light">Welcome: </span>
                                     <span class="px-1 text-light">{{ app.user.firstName }}</span>
                                     <span class="px-1 text-light">{{ app.user.lastName }}</span>
+                                </li>
 
+                                <li class="d-flex justify-content-center align-items-center text-light">|</li>
+
+                                <li class="nav-item">
                                     <a class="nav-link text-success" href="{{ path('app_logout') }}">Log out</a>
                                 </li>
+
                             {% else %}
+                                <li class="d-flex justify-content-center align-items-center text-light">|</li>
+
                                 <li class="nav-item">
                                     <a class="nav-link text-success" href="{{ path('app_login') }}">Log in</a>
                                 </li>
