@@ -104,9 +104,9 @@ class AdminNewsController extends AbstractController
                 }
             }
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($news);
-            $em->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($news);
+            $entityManager->flush();
 
             $this->addFlash('success', 'Saved news');
             return $this->redirectToRoute('admin_add_news');
@@ -152,9 +152,9 @@ class AdminNewsController extends AbstractController
                 }
             }
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($news);
-            $em->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($news);
+            $entityManager->flush();
 
             $this->addFlash('success', 'Saved new news');
         }
@@ -180,9 +180,9 @@ class AdminNewsController extends AbstractController
             throw $this->createNotFoundException('News not found');
         }
 
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($newsById);
-        $em->flush();
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($newsById);
+        $entityManager->flush();
 
         $this->addFlash('success', 'News deleted');
         return $this->redirectToRoute('admin_news_list');
@@ -205,9 +205,9 @@ class AdminNewsController extends AbstractController
 
         $newsById->setActive($active == 'true');
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($newsById);
-        $em->flush();
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($newsById);
+        $entityManager->flush();
 
         $this->addFlash('change', 'This is a success change!');
     }

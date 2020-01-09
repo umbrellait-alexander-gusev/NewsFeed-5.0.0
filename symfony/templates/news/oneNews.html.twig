@@ -37,9 +37,20 @@
         </div>
 
         <div class=" w-100 comment-list px-3 mt-3 mb-5 d-flex flex-column justify-content-start align-items-baseline">
+            <div class="container mb-4">
+                <h3 class="pb-2">Add comment</h3>
+                {{ block("form", "news/addComment.html.twig") }}
+            </div>
+
             <div class="container">
                 <h3 class="pb-2">Comments list</h3>
-                {{ block("comment", "news/commentsNews.html.twig") }}
+                {% if comments|length > 0 %}
+                    {{ block("comment", "news/commentsNews.html.twig") }}
+                {% else %}
+                    <div class="row d-flex flex-wrap justify-content-center align-items-center border-top p-4">
+                        <p>There are no comments yet for the news</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </main>

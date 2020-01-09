@@ -1,63 +1,33 @@
-{% extends 'oneNews.html.twig' %}
-
 {% block comment %}
-    <div class="row py-3 border-top">
-        <div class="col-md-8">
-            <div class="pb-2">
-                <h5 class="h5 mb-0">John Doe</h5>
+    {% for comment in comments %}
+        <div class="row py-3 border-top">
+            <div class="col-md-8">
+                <div class="pb-2">
+                    <h5 class="h5 mb-0">{{ comment.userName }}</h5>
+                </div>
+
+                <p>{{ comment.textComment }}</p>
+
+                <ul class="list-inline d-flex my-0">
+                    <li class="list-inline-item">
+                        <a class="text-primary text-decoration-none" href="#">
+                            <i class="far fa-thumbs-up"></i>
+                            {{ comment.countLike }}
+                        </a>
+                    </li>
+
+                    <li class="list-inline-item">
+                        <a class="text-danger text-decoration-none" href="#">
+                            <i class="far fa-thumbs-down"></i>
+                            {{ comment.countDislike }}
+                        </a>
+                    </li>
+
+                    <li class="list-inline-item ml-auto">
+                        <span class="font-italic">{{ comment.dateCreated|date("d/m/Y") }}</span>
+                    </li>
+                </ul>
             </div>
-
-            <p>Authoritatively reinvent timely benefits before client-based initiatives. Credibly exploit resource maximizing e-markets whereas B2B niches. Credibly deploy economically sound convergence without interdependent leadership skills. Rapidiously mesh inexpensive partnerships rather than focused communities. Objectively procrastinate B2C systems through team driven applications. Collaboratively repurpose 2.0 opportunities rather than orthogonal potentialities. Progressively disintermediate multidisciplinary value vis-a-vis.</p>
-
-            <ul class="list-inline d-flex my-0">
-                <li class="list-inline-item">
-                    <a class="text-primary text-decoration-none" href="#">
-                        <i class="far fa-thumbs-up"></i>
-                        178
-                    </a>
-                </li>
-
-                <li class="list-inline-item">
-                    <a class="text-danger text-decoration-none" href="#">
-                        <i class="far fa-thumbs-down"></i>
-                        34
-                    </a>
-                </li>
-
-                <li class="list-inline-item ml-auto">
-                    <span class="font-italic">5 days ago</span>
-                </li>
-            </ul>
         </div>
-    </div>
-
-    <div class="row py-3 border-top">
-        <div class="col-md-8">
-            <div class="pb-2">
-                <h5 class="h5 mb-0">Christian Chang</h5>
-            </div>
-
-            <p>Enthusiastically innovate interoperable opportunities after flexible e-tailers. Appropriately leverage other's adaptive best practices via low-risk high-yield meta-services. Seamlessly productivate an expanded array of alignments rather than superior markets. Credibly integrate proactive collaboration and idea-sharing without compelling applications. Quickly unleash exceptional content with high standards in technologies. Monotonectally conceptualize an expanded array of paradigms.</p>
-
-            <ul class="list-inline d-flex my-0">
-                <li class="list-inline-item">
-                    <a class="text-primary text-decoration-none" href="#">
-                        <i class="far fa-thumbs-up"></i>
-                        12
-                    </a>
-                </li>
-
-                <li class="list-inline-item">
-                    <a class="text-danger text-decoration-none" href="#">
-                        <i class="far fa-thumbs-down"></i>
-                        4
-                    </a>
-                </li>
-
-                <li class="list-inline-item ml-auto">
-                    <span class="font-italic">12.12.19</span>
-                </li>
-            </ul>
-        </div>
-    </div>
+    {% endfor %}
 {% endblock %}
