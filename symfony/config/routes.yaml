@@ -9,3 +9,7 @@ admin_controllers:
 news_controllers:
   resource: '../src/Bundle/NewsBundle/Controller/'
   type: annotation
+
+user_controllers:
+  resource: '../src/Bundle/UserBundle/Controller/'
+  type: annotation

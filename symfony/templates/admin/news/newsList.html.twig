@@ -5,9 +5,17 @@
 {% endblock %}
 
 {% block content %}
-    {% for flash in app.session.flashbag.get('success') %}
-        <div class="col-2 text-center alert alert-success ml-auto mr-3">News deleted</div>
-    {% endfor %}
+    {% if app.session is not null and app.session.started %}
+        {% for label, messages in app.session.flashbag.all %}
+            {% for message in messages %}
+                <div class="container mt-2">
+                    <div class="w-100 m-0 text-center alert {% if label == 'danger' %}alert-danger{% else %}alert-success{% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
 
     <div class="wrapper w-100 bg-white py-3">
         <h1 class="text-center">
@@ -23,6 +31,7 @@
                         <th>Title</th>
                         <th>Category</th>
                         <th>News</th>
+                        <th class="text-center">Date</th>
                         <th class="text-center">Options</th>
                     </tr>
                 </thead>
@@ -37,6 +46,7 @@
                                 {% endif %}
                             {% endfor %}
                             <td style="max-width: 600px">{{ news.news }}</td>
+                            <td style="min-width: 100px">{{ news.created|date("d/m/Y") }}</td>
                             <td class="d-flex flex-row justify-content-center" style="min-width: 200px">
                                 <div class="mx-2">
                                     <input class="toggle-button" type="checkbox" {% if news.active %}checked{% endif %} data-item-id="{{ news.id }}" data-toggle="toggle" data-onstyle="outline-success" data-offstyle="outline-danger">

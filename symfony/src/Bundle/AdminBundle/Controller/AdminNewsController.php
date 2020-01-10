@@ -23,6 +23,8 @@ class AdminNewsController extends AbstractController
     private $knpPaginator;
     private $news;
     private $category;
+    private $comment;
+    private $likeComment;
 
     /**
      * Class constructor
@@ -35,6 +37,8 @@ class AdminNewsController extends AbstractController
         $this->knpPaginator = $knpPaginator;
         $this->news = $this->entityManager->getRepository('NewsBundle:News');
         $this->category = $this->entityManager->getRepository('NewsBundle:Category');
+        $this->comment = $this->entityManager->getRepository('NewsBundle:Comment');
+        $this->likeComment = $this->entityManager->getRepository('NewsBundle:LikeComment');
     }
 
     /**
@@ -104,9 +108,9 @@ class AdminNewsController extends AbstractController
                 }
             }
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($news);
-            $em->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($news);
+            $entityManager->flush();
 
             $this->addFlash('success', 'Saved news');
             return $this->redirectToRoute('admin_add_news');
@@ -152,11 +156,11 @@ class AdminNewsController extends AbstractController
                 }
             }
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($news);
-            $em->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($news);
+            $entityManager->flush();
 
-            $this->addFlash('success', 'Saved new news');
+            $this->addFlash('success', 'Changes saved successfully');
         }
 
         return $this->render('admin/news/editNews.html.twig', [
@@ -180,11 +184,25 @@ class AdminNewsController extends AbstractController
             throw $this->createNotFoundException('News not found');
         }
 
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($newsById);
-        $em->flush();
+        $entityManager = $this->getDoctrine()->getManager();
 
-        $this->addFlash('success', 'News deleted');
+        $comments = $this->comment->findCommentsByNewsId($id);
+
+        foreach ($comments as $comment) {
+            $commentId = $comment->getId();
+            $allLikeComment = $this->likeComment->findLikeCommentByCommentId($commentId);
+
+            foreach ($allLikeComment as $likeComment) {
+                $entityManager->remove($likeComment);
+            }
+
+            $entityManager->remove($comment);
+        }
+
+        $entityManager->remove($newsById);
+        $entityManager->flush();
+
+        $this->addFlash('danger', 'News successfully deleted');
         return $this->redirectToRoute('admin_news_list');
     }
 
@@ -205,10 +223,8 @@ class AdminNewsController extends AbstractController
 
         $newsById->setActive($active == 'true');
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($newsById);
-        $em->flush();
-
-        $this->addFlash('change', 'This is a success change!');
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($newsById);
+        $entityManager->flush();
     }
 }

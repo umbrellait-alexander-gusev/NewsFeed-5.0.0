@@ -4,6 +4,29 @@
     {{ oneNews.title }}
 {% endblock %}
 
+{% block stylesheets %}
+    <style type="text/css">
+        .wrapper-title-news {
+            min-height: 400px;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .pointer-events {
+            pointer-events: none;
+        }
+
+        .like-thumb {
+            width:  30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <main class="h-auto bg-light d-flex flex-column justify-content-start align-items-center">
         <h6 class="w-100 text-dark p-3 m-0 border-bottom border-secondary"><i>
@@ -28,7 +51,7 @@
             </h1>
         </div>
 
-        <div style="min-height: 400px" class="wrapper w-100 h-100 p-3 d-flex flex-column justify-content-start bg-info">
+        <div class="wrapper wrapper-title-news w-100 h-100 p-3 d-flex flex-column justify-content-start bg-info">
             <div class="container">
                 <div class="row d-flex flex-wrap justify-content-start align-items-center p-4 text-white">
                     <p>{{ oneNews.news }}</p>
@@ -36,11 +59,125 @@
             </div>
         </div>
 
+        {% if app.session is not null and app.session.started %}
+            {% for label, messages in app.session.flashbag.all %}
+                {% for message in messages %}
+                    <div class="container mt-3">
+                        <div class="w-100 text-center m-0 alert alert-success" role="alert">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+
         <div class=" w-100 comment-list px-3 mt-3 mb-5 d-flex flex-column justify-content-start align-items-baseline">
+            <div class="container mb-4">
+                <h3 class="pb-2 text-center">Add comment</h3>
+                {{ block("form", "news/addComment.html.twig") }}
+            </div>
+
             <div class="container">
-                <h3 class="pb-2">Comments list</h3>
-                {{ block("comment", "news/commentsNews.html.twig") }}
+                <h3 class="pb-2 text-center">Comments list</h3>
+                {% if comments|length > 0 %}
+                    {{ block("comment", "news/commentsNews.html.twig") }}
+                {% else %}
+                    <div class="row d-flex flex-wrap justify-content-center align-items-center border-top p-4">
+                        <p>There are no comments yet for the news</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </main>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Unregistered User</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <p>To leave a vote you need to login or register</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a type="button" class="btn btn-primary" href="{{ path('app_login') }}">Log in</a>
+{#                    <a type="button" class="btn btn-primary" href="{{ path('app_registration') }}">Registration</a>#}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block javascripts %}
+    <script type="text/javascript">
+        (function($) {
+            $('.like-thumb-up')
+                .mouseover(function() {
+                    $( this )
+                        .removeClass('text-secondary')
+                        .addClass('text-primary')
+                })
+                .mouseout(function() {
+                    $( this )
+                        .removeClass('text-primary')
+                        .addClass('text-secondary')
+                });
+
+            $('.like-thumb-down')
+                .mouseover(function() {
+                    $( this )
+                        .removeClass('text-secondary')
+                        .addClass('text-danger')
+                })
+                .mouseout(function() {
+                    $( this )
+                        .removeClass('text-danger')
+                        .addClass('text-secondary')
+                });
+
+            $('li.wrapper-like-thumb-up').on('click', function() {
+                const commentId = $(this).parents('.one-comment').attr('data-comment-id');
+                const likeCommentType = 1;
+                let countLikeThumbUp = $(this).find('.count-like').attr('data-count-like');
+                countLikeThumbUp++;
+
+                $(this).html('<span class="like-thumb cursor-pointer text-primary text-decoration-none"><i class="fas fa-thumbs-up"></i><span class="count-like" data-count-like="'+ countLikeThumbUp +'">'+ countLikeThumbUp +'</span></span>');
+                $(this).parent()
+                    .find('.wrapper-like-thumb-down .text-secondary')
+                    .removeClass('text-secondary')
+                    .addClass('text-danger');
+                $(this).parent()
+                    .find('.wrapper-like-thumb')
+                    .addClass('pointer-events');
+
+                $.get('/change_like_comment/' + commentId + '/' +  likeCommentType, function(data) {});
+            });
+
+            $('li.wrapper-like-thumb-down').on('click', function() {
+                const commentId = $(this).parents('.one-comment').attr('data-comment-id');
+                const likeCommentType = 0;
+                let countLikeThumbDown = $(this).find('.count-like').attr('data-count-like');
+                countLikeThumbDown++;
+
+                $(this).html('<span class="like-thumb cursor-pointer text-danger text-decoration-none"><i class="fas fa-thumbs-down"></i><span class="count-like" data-count-like="'+ countLikeThumbDown +'">'+ countLikeThumbDown +'</span></span>');
+                $(this).parent()
+                    .find('.wrapper-like-thumb-up .text-secondary')
+                    .removeClass('text-secondary')
+                    .addClass('text-primary');
+                $(this).parent()
+                    .find('.wrapper-like-thumb')
+                    .addClass('pointer-events');
+
+                $.get('/change_like_comment/' + commentId + '/' +  likeCommentType, function(data) {});
+            });
+        })(jQuery)
+    </script>
 {% endblock %}
