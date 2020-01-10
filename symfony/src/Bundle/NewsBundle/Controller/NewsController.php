@@ -2,12 +2,12 @@
 
 namespace App\Bundle\NewsBundle\Controller;
 
+use App\Bundle\NewsBundle\Entity\LikeComment;
 use App\Bundle\NewsBundle\Form\CommentType;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Symfony\Component\Routing\Annotation\Route;
@@ -116,6 +116,7 @@ class NewsController extends AbstractController
      */
     public function getOneNews(Request $request, $id, $queryCategoryName)
     {
+        $authorizedUser = $this->security->getUser();
         $newsById = $this->news->find($id);
         $comments = $this->comment->findCommentsByNewsId($id);
         $modifiedComments = [];
@@ -127,10 +128,7 @@ class NewsController extends AbstractController
             $countLike = 0;
             $countDislike = 0;
 
-            foreach ($allLikeComment as $likeComment) {
-                $likeComment->getLikeComment() ? $countLike++ : $countDislike++;
-            }
-
+            $commentId = $comment->getId();
             $textComment = $comment->getText();
             $dateCreated = $comment->getCreated();
             $authorComment = 'Unregistered User';
@@ -140,12 +138,39 @@ class NewsController extends AbstractController
                 $userLastName = $user->getLastName();
                 $authorComment = $userFirstName . ' ' . $userLastName;
             }
+
+            $commentActive = false;
+            $selectedLikeCommentType = null;
+
+            foreach ($allLikeComment as $likeComment) {
+                $authorIdLikeComment = $likeComment->getUser()->getId();
+
+                if (isset($authorizedUser)) {
+                    if ($authorizedUser->getId() == $authorIdLikeComment) {
+
+                        $commentActive = true;
+                    }
+                }
+
+                if ($likeComment->getLikeComment() === true) {
+                    $countLike++;
+
+                } else if ($likeComment->getLikeComment() === false) {
+                    $countDislike++;
+                }
+
+                $selectedLikeCommentType = $likeComment->getLikeComment();
+            }
+
             $modifiedComments[$key] = [
                 'userName' => $authorComment,
+                'commentId' => $commentId,
                 'textComment' => $textComment,
                 'countLike' => $countLike,
                 'countDislike' => $countDislike,
                 'dateCreated' => $dateCreated,
+                'commentActive' => $commentActive,
+                'selectedLikeCommentType' => $selectedLikeCommentType,
             ];
         }
 
@@ -156,6 +181,12 @@ class NewsController extends AbstractController
 
             return ($a['dateCreated'] > $b['dateCreated']) ? -1 : 1;
         });
+
+        $paginationComments = $this->knpPaginator->paginate(
+            $modifiedComments,
+            $request->query->getInt('page', 1),
+            5
+        );
 
         if (!$newsById) {
             throw $this->createNotFoundException('News not found');
@@ -168,11 +199,6 @@ class NewsController extends AbstractController
         $form->add('submit', SubmitType::class);
         $form->handleRequest($request);
 
-        $authorizedUser = $this->security->getUser();
-//        $IdAuthorizedUser = null;
-//        if ($authorizedUser) {
-//        }
-
         if ($form->isSubmitted() && $form->isValid()) {
             $comment = $form->getData();
 
@@ -183,15 +209,43 @@ class NewsController extends AbstractController
             $entityManager->persist($comment);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Comment adding');
+            $this->addFlash('success', 'Your comment successful adding');
             return $this->redirectToRoute('one_news', ['id' => $id, 'queryCategoryName' => $queryCategoryName]);
         }
 
         return $this->render('news/oneNews.html.twig', [
             'oneNews' => $newsById,
             'nameCategoryBackPage' => $nameCategoryBackPage,
-            'comments' => $modifiedComments,
+            'comments' => $paginationComments,
             'commentForm' => $form->createView(),
         ]);
+    }
+
+    /**
+     * Change active news
+     *
+     * @Route("/change_like_comment/{commentId}/{likeCommentType}", name="change_like_comment")
+     * @param $commentId
+     * @param $likeCommentType
+     */
+    public function changeLikeComment(int $commentId, int $likeCommentType)
+    {
+        $authorizedUser = $this->security->getUser();
+
+        if (isset($authorizedUser)) {
+            $userId = $authorizedUser->getId();
+
+            $likeComment = new LikeComment;
+            $user = $this->user->findById($userId);
+            $comment = $this->comment->findById($commentId);
+
+            $likeComment->setUser($user[0]);
+            $likeComment->setComment($comment[0]);
+            $likeComment->setLikeComment($likeCommentType);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($likeComment);
+            $entityManager->flush();
+        }
     }
 }

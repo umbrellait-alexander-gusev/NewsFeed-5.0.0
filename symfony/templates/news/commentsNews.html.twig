@@ -1,6 +1,8 @@
 {% block comment %}
     {% for comment in comments %}
-        <div class="row py-3 border-top">
+        {% set selectedLikeCommentType = comment.selectedLikeCommentType %}
+
+        <div class="one-comment row py-3 border-top d-flex justify-content-center align-items-center" data-comment-id="{{ comment.commentId}}">
             <div class="col-md-8">
                 <div class="pb-2">
                     <h5 class="h5 mb-0">{{ comment.userName }}</h5>
@@ -9,19 +11,51 @@
                 <p>{{ comment.textComment }}</p>
 
                 <ul class="list-inline d-flex my-0">
-                    <li class="list-inline-item">
-                        <a class="text-primary text-decoration-none" href="#">
-                            <i class="far fa-thumbs-up"></i>
-                            {{ comment.countLike }}
-                        </a>
-                    </li>
+                    {% if app.user != null %}
+                        {% if comment.commentActive == true and (comment.selectedLikeCommentType is same as(true) or comment.selectedLikeCommentType is same as(false)) %}
+                            <li class="list-inline-item">
+                                <span class="like-thumb text-primary text-decoration-none">
+                                    <i class="{% if comment.selectedLikeCommentType == true %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
+                                    {{ comment.countLike }}
+                                </span>
+                            </li>
 
-                    <li class="list-inline-item">
-                        <a class="text-danger text-decoration-none" href="#">
-                            <i class="far fa-thumbs-down"></i>
-                            {{ comment.countDislike }}
-                        </a>
-                    </li>
+                            <li class="list-inline-item">
+                                <span class="like-thumb text-danger text-decoration-none">
+                                    <i class="{% if comment.selectedLikeCommentType == false %}fas{% else %}far{% endif %} fa-thumbs-down"></i>
+                                    {{ comment.countDislike }}
+                                </span>
+                            </li>
+                        {% elseif comment.commentActive == false or comment.selectedLikeCommentType is same as(null) %}
+                            <li class="list-inline-item wrapper-like-thumb wrapper-like-thumb-up">
+                                <span class="cursor-pointer like-thumb like-thumb-up text-secondary text-decoration-none">
+                                    <i class="far fa-thumbs-up"></i>
+                                    <span class="count-like" data-count-like="{{ comment.countLike }}">{{ comment.countLike }}</span>
+                                </span>
+                            </li>
+
+                            <li class="list-inline-item wrapper-like-thumb wrapper-like-thumb-down">
+                                <span class="cursor-pointer like-thumb like-thumb-down text-secondary text-decoration-none">
+                                    <i class="far fa-thumbs-down"></i>
+                                    <span class="count-like" data-count-like="{{ comment.countDislike }}">{{ comment.countDislike }}</span>
+                                </span>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="list-inline-item" data-toggle="modal" data-target="#exampleModal">
+                            <span class="like-thumb cursor-pointer text-primary text-decoration-none">
+                                <i class="far fa-thumbs-up"></i>
+                                {{ comment.countLike }}
+                            </span>
+                        </li>
+
+                        <li class="list-inline-item" data-toggle="modal" data-target="#exampleModal">
+                            <span class="like-thumb cursor-pointer text-danger text-decoration-none">
+                                <i class="far fa-thumbs-down"></i>
+                                {{ comment.countDislike }}
+                            </span>
+                        </li>
+                    {% endif %}
 
                     <li class="list-inline-item ml-auto">
                         <span class="font-italic">{{ comment.dateCreated|date("d/m/Y") }}</span>
@@ -30,4 +64,10 @@
             </div>
         </div>
     {% endfor %}
+
+    <div class="row py-3 border-top d-flex justify-content-center align-items-center">
+        <div class="navigation mt-5 mx-auto">
+            {{ knp_pagination_render(comments) }}
+        </div>
+    </div>
 {% endblock %}

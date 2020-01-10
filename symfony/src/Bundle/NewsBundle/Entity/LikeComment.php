@@ -36,24 +36,24 @@ class LikeComment
         return $this->id;
     }
 
-    public function getUser(): ?int
+    public function getUser()
     {
         return $this->user;
     }
 
-    public function setUser(int $user): self
+    public function setUser($user): self
     {
         $this->user = $user;
 
         return $this;
     }
 
-    public function getComment(): ?int
+    public function getComment()
     {
         return $this->comment;
     }
 
-    public function setComment(int $comment): self
+    public function setComment($comment): self
     {
         $this->comment = $comment;
 
