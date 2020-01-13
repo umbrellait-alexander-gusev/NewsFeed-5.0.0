@@ -2,6 +2,7 @@
 
 namespace App\Bundle\UserBundle\Controller;
 
+use App\Bundle\NewsBundle\Form\CommentType;
 use App\Bundle\UserBundle\Form\UserInformationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -62,7 +63,7 @@ class UserDashboardController extends AbstractController
         }
 
         $form = $this->createForm(UserInformationType::class, $authorizedUser);
-        $form->add('submit', SubmitType::class);
+        $form->add('save', SubmitType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
