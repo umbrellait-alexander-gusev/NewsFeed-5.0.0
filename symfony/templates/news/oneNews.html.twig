@@ -80,7 +80,7 @@
             <div class="container">
                 <h3 class="pb-2 text-center">Comments list</h3>
                 {% if comments|length > 0 %}
-                    {{ block("comment", "news/commentsNews.html.twig") }}
+                    {{ block("comments", "news/commentsNews.html.twig") }}
                 {% else %}
                     <div class="row d-flex flex-wrap justify-content-center align-items-center border-top p-4">
                         <p>There are no comments yet for the news</p>

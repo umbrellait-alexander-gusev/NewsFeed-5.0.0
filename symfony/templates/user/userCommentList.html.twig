@@ -1,0 +1,22 @@
+{% block comments %}
+    {% for comment in comments %}
+        <div class="one-comment row py-3 mb-5 border-top d-flex justify-content-center align-items-center rounded-pill bg-light">
+            <div class="col-md-8">
+                <a href="{{ path('one_news', { id: comment.newsId, queryCategoryName: 'All Category' }) }}">
+                    <h5 class="h5 mb-3">{{ comment.newsTitle }}</h5>
+                </a>
+
+                <p>{{ comment.commentText }}</p>
+
+
+                <div class="d-flex justify-content-end">
+                    <a class="mr-0 ml-auto" href="#">Edit comment</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="navigation mt-5 mx-auto d-flex justify-content-center">
+        {{ knp_pagination_render(comments) }}
+    </div>
+{% endblock %}

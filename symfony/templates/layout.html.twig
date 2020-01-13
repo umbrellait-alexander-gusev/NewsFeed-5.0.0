@@ -39,14 +39,16 @@
                                 <li class="d-flex justify-content-center align-items-center text-light">|</li>
 
                                 <li class="nav-item d-flex justify-content-center align-items-center">
-                                    <span class="px-1 text-light">Welcome: </span>
+                                    <a class="nav-link text-light" href="{{ path('user_dashboard') }}">
+                                        <span class="px-1 text-light">Welcome: </span>
 
-                                    {% if app.user.firstName == '' and app.user.lastName == '' %}
-                                        <span class="px-1 text-light">{{ app.user.email }}</span>
-                                    {% else %}
-                                        <span class="px-1 text-light">{{ app.user.firstName }}</span>
-                                        <span class="px-1 text-light">{{ app.user.lastName }}</span>
-                                    {% endif %}
+                                        {% if app.user.firstName == '' and app.user.lastName == '' %}
+                                            <span class="px-1 text-light">{{ app.user.email }}</span>
+                                        {% else %}
+                                            <span class="px-1 text-light">{{ app.user.firstName }}</span>
+                                            <span class="px-1 text-light">{{ app.user.lastName }}</span>
+                                        {% endif %}
+                                    </a>
                                 </li>
 
                                 <li class="d-flex justify-content-center align-items-center text-light">|</li>

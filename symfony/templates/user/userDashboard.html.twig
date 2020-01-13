@@ -1,0 +1,84 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    User dashboard
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        form,
+        .alert {
+            width: 100%;
+            max-width: 600px !important;
+            margin: 0 auto;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="wrapper w-100 h-auto bg-white p-5 border-bottom border-dark d-flex flex-column justify-content-start">
+        <h1 class="text-center">
+            <span class="welcome-text">User dashboard</span>
+        </h1>
+    </div>
+
+    <div class="wrapper w-100 h-auto py-5 news-list bg-secondary">
+        {% if app.session is not null and app.session.started %}
+            {% for label, messages in app.session.flashbag.all %}
+                {% for message in messages %}
+                    <div class="container mt-3">
+                        <div class="w-100 text-center mb-3 mx-auto alert alert-success" role="alert">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+
+        <div class="container">
+            <div class="row d-flex flex-wrap justify-content-center align-items-center p-4 text-white">
+
+                {{ form_start(registrationForm) }}
+                    <h1 class="h3 mb-3 font-weight-normal">Personal data</h1>
+
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col">
+                                {{ form_label(registrationForm.firstName, 'First Name') }}
+                                {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'First Name'}}) }}
+
+                            </div>
+
+                            <div class="col">
+                                {{ form_label(registrationForm.lastName, 'Last Name') }}
+                                {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Last Name'}}) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-5 text-center">
+                        {{ form_label(registrationForm.submit, 'Save information') }}
+                        {{ form_widget(registrationForm.submit, {'attr': {'class': 'btn btn-primary'}}) }}
+                    </div>
+                {{ form_end(registrationForm) }}
+            </div>
+        </div>
+
+        <div class="container mt-4">
+            <h3 class="mb-5 text-center text-light">Your comments</h3>
+
+            <div class="container">
+                {% if comments|length > 0 %}
+                    {{ block("comments", "user/userCommentList.html.twig") }}
+
+                {% else %}
+                    <div class="row d-flex flex-wrap justify-content-center align-items-center border-top p-4">
+                        <p>You have not written any comments yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

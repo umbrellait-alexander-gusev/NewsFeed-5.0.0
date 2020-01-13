@@ -19,6 +19,16 @@ class LikeCommentRepository extends ServiceEntityRepository
         parent::__construct($registry, LikeComment::class);
     }
 
+    public function findLikeCommentByUserId($userId)
+    {
+        return $this
+            ->createQueryBuilder('like_comment')
+            ->where('like_comment.user = :user')
+            ->setParameter('user', $userId)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findLikeCommentByCommentId($commentId)
     {
         return $this
