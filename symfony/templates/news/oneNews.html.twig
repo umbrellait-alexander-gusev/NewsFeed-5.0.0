@@ -36,4 +36,98 @@
             </div>
         </div>
     </main>
+<<<<<<< HEAD
+=======
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Unregistered User</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <p>To leave a vote you need to login or register</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a type="button" class="btn btn-primary" href="{{ path('app_login') }}">Log in</a>
+                    <a type="button" class="btn btn-primary" href="{{ path('app_registration') }}">Registration</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block javascripts %}
+    <script type="text/javascript">
+        (function($) {
+            $('.like-thumb-up')
+                .mouseover(function() {
+                    $( this )
+                        .removeClass('text-secondary')
+                        .addClass('text-primary')
+                })
+                .mouseout(function() {
+                    $( this )
+                        .removeClass('text-primary')
+                        .addClass('text-secondary')
+                });
+
+            $('.like-thumb-down')
+                .mouseover(function() {
+                    $( this )
+                        .removeClass('text-secondary')
+                        .addClass('text-danger')
+                })
+                .mouseout(function() {
+                    $( this )
+                        .removeClass('text-danger')
+                        .addClass('text-secondary')
+                });
+
+            $('li.wrapper-like-thumb-up').on('click', function() {
+                const commentId = $(this).parents('.one-comment').attr('data-comment-id');
+                const likeCommentType = 1;
+                let countLikeThumbUp = $(this).find('.count-like').attr('data-count-like');
+                countLikeThumbUp++;
+
+                $(this).html('<span class="like-thumb cursor-pointer text-primary text-decoration-none"><i class="fas fa-thumbs-up"></i><span class="count-like" data-count-like="'+ countLikeThumbUp +'">'+ countLikeThumbUp +'</span></span>');
+                $(this).parent()
+                    .find('.wrapper-like-thumb-down .text-secondary')
+                    .removeClass('text-secondary')
+                    .addClass('text-danger');
+                $(this).parent()
+                    .find('.wrapper-like-thumb')
+                    .addClass('pointer-events');
+
+                $.get('/change_like_comment/' + commentId + '/' +  likeCommentType, function(data) {});
+            });
+
+            $('li.wrapper-like-thumb-down').on('click', function() {
+                const commentId = $(this).parents('.one-comment').attr('data-comment-id');
+                const likeCommentType = 0;
+                let countLikeThumbDown = $(this).find('.count-like').attr('data-count-like');
+                countLikeThumbDown++;
+
+                $(this).html('<span class="like-thumb cursor-pointer text-danger text-decoration-none"><i class="fas fa-thumbs-down"></i><span class="count-like" data-count-like="'+ countLikeThumbDown +'">'+ countLikeThumbDown +'</span></span>');
+                $(this).parent()
+                    .find('.wrapper-like-thumb-up .text-secondary')
+                    .removeClass('text-secondary')
+                    .addClass('text-primary');
+                $(this).parent()
+                    .find('.wrapper-like-thumb')
+                    .addClass('pointer-events');
+
+                $.get('/change_like_comment/' + commentId + '/' +  likeCommentType, function(data) {});
+            });
+        })(jQuery)
+    </script>
+>>>>>>> 3436400... Create template for registration new User
 {% endblock %}

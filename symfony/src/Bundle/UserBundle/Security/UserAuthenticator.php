@@ -81,7 +81,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
     }
 
     /**
-     * Used to upgrade (rehash) the user's password automatically over time.
+     * Used to upgrade (rehash) the user's password automatically over time.q
      */
     public function getPassword($credentials): ?string
     {
