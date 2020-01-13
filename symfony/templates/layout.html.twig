@@ -31,10 +31,6 @@
                                 <a class="nav-link text-warning" href="{{ path('home') }}">Home</a>
                             </li>
 
-                            <li class="d-flex justify-content-center align-items-center text-warning">
-                                &#8211;
-                            </li>
-
                             <li class="nav-item">
                                 <a class="nav-link text-warning" href="{{ path('news') }}">News List</a>
                             </li>
@@ -44,8 +40,13 @@
 
                                 <li class="nav-item d-flex justify-content-center align-items-center">
                                     <span class="px-1 text-light">Welcome: </span>
-                                    <span class="px-1 text-light">{{ app.user.firstName }}</span>
-                                    <span class="px-1 text-light">{{ app.user.lastName }}</span>
+
+                                    {% if app.user.firstName == '' and app.user.lastName == '' %}
+                                        <span class="px-1 text-light">{{ app.user.email }}</span>
+                                    {% else %}
+                                        <span class="px-1 text-light">{{ app.user.firstName }}</span>
+                                        <span class="px-1 text-light">{{ app.user.lastName }}</span>
+                                    {% endif %}
                                 </li>
 
                                 <li class="d-flex justify-content-center align-items-center text-light">|</li>
@@ -59,6 +60,12 @@
 
                                 <li class="nav-item">
                                     <a class="nav-link text-success" href="{{ path('app_login') }}">Log in</a>
+                                </li>
+
+                                <li class="d-flex justify-content-center align-items-center text-light">or</li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-success" href="{{ path('app_registration') }}">Registration</a>
                                 </li>
                             {% endif %}
                         </ul>
