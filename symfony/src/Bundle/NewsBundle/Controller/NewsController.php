@@ -118,7 +118,7 @@ class NewsController extends AbstractController
     {
         $authorizedUser = $this->security->getUser();
         $newsById = $this->news->find($id);
-        $comments = $this->comment->findCommentsByNewsId($id);
+        $comments = $this->comment->getCommentsByNewsId($id);
         $modifiedComments = [];
 
         foreach ($comments as $key => $comment) {

@@ -12,6 +12,25 @@
             max-width: 600px !important;
             margin: 0 auto;
         }
+
+        .invalid-feedback {
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .required {
+            position: relative;
+        }
+
+        .required::after {
+            content: '*';
+            color: #dc3545;
+            padding-left: 3px;
+            text-shadow: 0 0 2px #000;
+        }
+
+        .comment-form {
+            max-width: 100% !important;
+        }
     </style>
 {% endblock %}
 
@@ -27,7 +46,7 @@
             {% for label, messages in app.session.flashbag.all %}
                 {% for message in messages %}
                     <div class="container mt-3">
-                        <div class="w-100 text-center mb-3 mx-auto alert alert-success" role="alert">
+                        <div class="w-100 text-center mb-3 mx-auto alert {% if label == 'successful' %}alert-success{% elseif label == 'danger'%}alert-danger{% endif %}" role="alert">
                             {{ message }}
                         </div>
                     </div>
@@ -39,25 +58,73 @@
             <div class="row d-flex flex-wrap justify-content-center align-items-center p-4 text-white">
 
                 {{ form_start(registrationForm) }}
-                    <h1 class="h3 mb-3 font-weight-normal">Personal data</h1>
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="col">
+                            {{ form_label(registrationForm.firstName, 'First Name') }}
+                            {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'First Name'}}) }}
 
-                    <div class="form-group">
-                        <div class="form-row">
-                            <div class="col">
-                                {{ form_label(registrationForm.firstName, 'First Name') }}
-                                {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'First Name'}}) }}
+                        </div>
+
+                        <div class="col">
+                            {{ form_label(registrationForm.lastName, 'Last Name') }}
+                            {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Last Name'}}) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.email, 'Email') }}
+
+                    {% if error is same as(false) %}
+                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+
+                    {% elseif error is same as(true) %}
+                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control is-invalid', 'placeholder': 'Email'}}) }}
+                        <div class="invalid-feedback">
+                            Invalid email address
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group password-group">
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="registration_newPassword">New password</label>
+                            <input type="password"
+                                   id="registration_newPassword"
+                                   class="form-control"
+                                   name="NewPassword"
+                                   placeholder="New password"
+                                   readonly
+                                   onfocus="this.removeAttribute('readonly')">
+                            <div class="invalid-feedback hide">
+                                Passwords do not match
                             </div>
+                        </div>
 
-                            <div class="col">
-                                {{ form_label(registrationForm.lastName, 'Last Name') }}
-                                {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Last Name'}}) }}
+                        <div class="col">
+                            <label for="registration_confirmPassword">Confirm password</label>
+                            <input type="password"
+                                   id="registration_confirmPassword"
+                                   class="form-control"
+                                   name="ConfirmPassword"
+                                   placeholder="Confirm password"
+                                   readonly
+                                   onfocus="this.removeAttribute('readonly')">
+                            <div class="invalid-feedback hide">
+                                Passwords do not match
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="form-group mt-5 text-center">
-                        {{ form_widget(registrationForm.save, {'attr': {'class': 'btn btn-primary'}}) }}
-                    </div>
+                <small class="form-text text-white"><span class="required"></span> - required fields</small>
+
+                <div class="form-group mt-5 text-center">
+                    {{ form_label(registrationForm.save) }}
+                    {{ form_widget(registrationForm.save, {'attr': {'class': 'btn btn-primary'}}) }}
+                </div>
                 {{ form_end(registrationForm) }}
             </div>
         </div>
@@ -79,4 +146,25 @@
     </div>
 {% endblock %}
 
-{% block javascripts %}{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript">
+        (function($) {
+            $('#registration_newPassword, #registration_confirmPassword').on('blur', function () {
+                const originalPassword = $('#registration_newPassword').val();
+                const confirmPassword = $('#registration_confirmPassword').val();
+
+                if (originalPassword !== '' && confirmPassword !== '') {
+                    const $passwordGroup = $('.password-group');
+                    if (originalPassword !== confirmPassword) {
+                        $passwordGroup.find('.form-control').addClass('is-invalid');
+                        $passwordGroup.find('.invalid-feedback').removeClass('hide');
+
+                    } else {
+                        $passwordGroup.find('.form-control').removeClass('is-invalid');
+                        $passwordGroup.find('.invalid-feedback').addClass('hide');
+                    }
+                }
+            })
+        })(jQuery)
+    </script>
+{% endblock %}

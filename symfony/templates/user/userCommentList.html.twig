@@ -1,17 +1,27 @@
 {% block comments %}
     {% for comment in comments %}
-        <div class="one-comment row py-3 mb-5 border-top d-flex justify-content-center align-items-center rounded-pill bg-light">
+        <div class="one-comment row py-4 mb-4 border-top d-flex justify-content-center align-items-center rounded-pill bg-light">
             <div class="col-md-8">
                 <a href="{{ path('one_news', { id: comment.newsId, queryCategoryName: 'All Category' }) }}">
-                    <h5 class="h5 mb-3">{{ comment.newsTitle }}</h5>
+                    <h5 class="h5 mb-3">Comment for news : <span>{{ comment.newsTitle }}</span></h5>
                 </a>
 
-                <p>{{ comment.commentText }}</p>
+                <form class="comment-form" class="w-100" method="POST">
+                    <div class="form-group mb-0">
+                        <label class="w-100" for="commentText">
+                            <textarea name="commentText" id="commentText" class="form-control" rows="10">{{ comment.commentText }}</textarea>
+                        </label>
+                    </div>
 
+                    <input type="hidden" name="commentId" value="{{ comment.commentId }}">
 
-                <div class="navigation mt-5 mx-auto d-flex justify-content-end">
-                    <a class="mr-0 ml-auto" href="javascript:void(0)">edit comment</a>
-                </div>
+                    <p>Date created: <span>{{ comment.commentCreated|date("d/m/Y") }}</span></p>
+
+                    <div class="form-group d-flex justify-content-end align-items-center">
+                        <input name="commentStatus" class="btn btn-primary mx-2" type="submit" value="Save">
+                        <input name="commentStatus" class="btn btn-danger mx-2" type="submit" value="Delete">
+                    </div>
+                </form>
             </div>
         </div>
     {% endfor %}

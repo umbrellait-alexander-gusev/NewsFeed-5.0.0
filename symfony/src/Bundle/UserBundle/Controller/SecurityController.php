@@ -33,7 +33,12 @@ class SecurityController extends AbstractController
      * @param UserAuthenticator $userAuthenticator
      * @param UserProviderInterface $userProvider
      */
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder, ValidatorInterface $validator, UserAuthenticator $userAuthenticator, UserProviderInterface $userProvider)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        UserPasswordEncoderInterface $passwordEncoder,
+        ValidatorInterface $validator,
+        UserAuthenticator $userAuthenticator,
+        UserProviderInterface $userProvider)
     {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;

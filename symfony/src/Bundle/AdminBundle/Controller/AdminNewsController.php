@@ -186,7 +186,7 @@ class AdminNewsController extends AbstractController
 
         $entityManager = $this->getDoctrine()->getManager();
 
-        $comments = $this->comment->findCommentsByNewsId($id);
+        $comments = $this->comment->getCommentsByNewsId($id);
 
         foreach ($comments as $comment) {
             $commentId = $comment->getId();

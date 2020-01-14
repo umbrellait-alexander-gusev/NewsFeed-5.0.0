@@ -19,12 +19,22 @@ class CommentRepository extends ServiceEntityRepository
         parent::__construct($registry, Comment::class);
     }
 
-    public function findCommentsByNewsId($newsId)
+    public function getCommentsByNewsId($newsId)
     {
         return $this
             ->createQueryBuilder('comment')
             ->where('comment.news = :news')
             ->setParameter('news', $newsId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getCommentByUserId($userId)
+    {
+        return $this
+            ->createQueryBuilder('comment')
+            ->where('comment.user = :user')
+            ->setParameter('user', $userId)
             ->getQuery()
             ->getResult();
     }
