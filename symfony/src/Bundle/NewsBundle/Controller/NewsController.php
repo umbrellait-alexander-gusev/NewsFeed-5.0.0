@@ -6,8 +6,10 @@ use App\Bundle\NewsBundle\Entity\LikeComment;
 use App\Bundle\NewsBundle\Form\CommentType;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use ProxyManager\Factory\RemoteObject\Adapter\JsonRpc;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Symfony\Component\Routing\Annotation\Route;
@@ -227,15 +229,15 @@ class NewsController extends AbstractController
      * @Route("/change_like_comment/{commentId}/{likeCommentType}", name="change_like_comment")
      * @param $commentId
      * @param $likeCommentType
+     * @return JsonResponse
      */
     public function changeLikeComment(int $commentId, int $likeCommentType)
     {
         $authorizedUser = $this->security->getUser();
+        $likeComment = new LikeComment;
 
         if (isset($authorizedUser)) {
             $userId = $authorizedUser->getId();
-
-            $likeComment = new LikeComment;
             $user = $this->user->findById($userId);
             $comment = $this->comment->findById($commentId);
 
@@ -247,5 +249,7 @@ class NewsController extends AbstractController
             $entityManager->persist($likeComment);
             $entityManager->flush();
         }
+
+        return new JsonResponse(['like comment' => 'Successful']);
     }
 }

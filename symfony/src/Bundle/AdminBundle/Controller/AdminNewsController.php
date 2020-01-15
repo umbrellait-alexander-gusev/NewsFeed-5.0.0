@@ -213,6 +213,7 @@ class AdminNewsController extends AbstractController
      * @Route("/change_active_news/{id}/{active}", name="admin_change_active_news")
      * @param $id
      * @param $active
+     * @return JsonResponse
      */
     public function changeActiveNews(int $id, $active)
     {
@@ -227,5 +228,7 @@ class AdminNewsController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($newsById);
         $entityManager->flush();
+
+        return new JsonResponse(['News active' => 'Successful']);
     }
 }
