@@ -4,6 +4,30 @@
     Dashboard news list
 {% endblock %}
 
+{% block stylesheets %}
+    <style type="text/css">
+        .category-column {
+            min-width: 100px;
+        }
+
+        .news-column {
+            max-width: 600px;
+        }
+
+        .created-column {
+            min-width: 100px;
+        }
+
+        .active-column {
+            min-width: 200px;
+        }
+
+        td {
+            border-top: 0 !important;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     {% if app.session is not null and app.session.started %}
         {% for label, messages in app.session.flashbag.all %}
@@ -38,16 +62,16 @@
 
                 <tbody>
                     {% for news in newsList %}
-                        <tr class="promocode-row">
-                            <td style="min-width: 100px">{{ news.title }}</td>
+                        <tr class="border-bottom">
+                            <td class="category-column">{{ news.title }}</td>
                             {% for newsId, category in categoryList %}
                                 {% if newsId == news.id %}
                                     <td>{{ category }}</td>
                                 {% endif %}
                             {% endfor %}
-                            <td style="max-width: 600px">{{ news.news }}</td>
-                            <td style="min-width: 100px">{{ news.created|date("d/m/Y") }}</td>
-                            <td class="d-flex flex-row justify-content-center" style="min-width: 200px">
+                            <td class="news-column">{{ news.news }}</td>
+                            <td class="created-column text-center">{{ news.created|date("d/m/Y") }}</td>
+                            <td class="active-column d-flex flex-row justify-content-center">
                                 <div class="mx-2">
                                     <input class="toggle-button" type="checkbox" {% if news.active %}checked{% endif %} data-item-id="{{ news.id }}" data-toggle="toggle" data-onstyle="outline-success" data-offstyle="outline-danger">
                                 </div>

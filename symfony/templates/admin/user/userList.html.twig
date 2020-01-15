@@ -1,0 +1,78 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}
+    Dashboard user list
+{% endblock %}
+
+{% block stylesheets %}
+    <style type="text/css">
+        .user-column,
+        .active-column {
+            min-width: 200px;
+        }
+
+        td {
+            border-top: 0 !important;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% if app.session is not null and app.session.started %}
+        {% for label, messages in app.session.flashbag.all %}
+            {% for message in messages %}
+                <div class="container mt-2">
+                    <div class="w-100 m-0 text-center alert {% if label == 'danger' %}alert-danger{% else %}alert-success{% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+    <div class="wrapper w-100 bg-white py-3">
+        <h1 class="text-center">
+            <span class="welcome-text">User List</span>
+        </h1>
+    </div>
+
+    <div class="col-sm-6 mx-auto mb-4">
+        <div class="row">
+            <table class="table table-striped table-sortable promocodes-list">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th class="active-column text-center">Options</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for user in userList %}
+                        <tr class="border-bottom">
+                            <td class="user-column">{{ user.userName}}</td>
+                            <td class="email-column">{{ user.userEmail }}</td>
+                            <td class="role-column">{{ user.userRole}}</td>
+                            <td class="active-column d-flex flex-row justify-content-center">
+                                <div class="mx-2">
+                                    <a class="btn btn-outline-dark" href="{{ path('admin_edit_user', { id: user.userId }) }}">Edit</a>
+                                </div>
+
+                                <div class="mx-2">
+                                    <a class="btn btn-danger" href="{{ path('admin_delete_user', { id: user.userId })}}">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="navigation mt-5 mx-auto">
+                {{ knp_pagination_render(userList) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

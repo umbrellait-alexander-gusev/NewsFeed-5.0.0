@@ -28,7 +28,7 @@
 
                     <div class="collapse navbar-collapse mx-3" id="navbarNavDropdown">
                         <ul class="navbar-nav">
-                            <li class="dropdown">
+                            <li class="nav-item dropdown px-2">
                                 <a href="javascript:void(0);" class="dropdown-toggle text-dark text-decoration-none" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                     <span>News</span>
                                     <span class="caret"></span>
@@ -36,6 +36,17 @@
                                 <ul class="dropdown-menu">
                                     <li><a class="nav-link text-dark" href="{{ path('admin_news_list') }}">News List</a></li>
                                     <li><a class="nav-link text-dark" href="{{ path('admin_add_news') }}">Adding news</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown px-2">
+                                <a href="javascript:void(0);" class="dropdown-toggle text-dark text-decoration-none" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <span>User</span>
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="nav-link text-dark" href="{{ path('admin_user_list') }}">User List</a></li>
+                                    <li><a class="nav-link text-dark" href="{{ path('app_registration') }}">Registration user</a></li>
                                 </ul>
                             </li>
                         </ul>

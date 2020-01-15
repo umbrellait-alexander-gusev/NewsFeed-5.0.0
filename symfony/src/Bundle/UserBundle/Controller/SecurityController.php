@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -23,6 +24,7 @@ class SecurityController extends AbstractController
     private $validator;
     private $userAuthenticator;
     private $userProvider;
+    private $security;
     private $user;
 
     /**
@@ -38,13 +40,15 @@ class SecurityController extends AbstractController
         UserPasswordEncoderInterface $passwordEncoder,
         ValidatorInterface $validator,
         UserAuthenticator $userAuthenticator,
-        UserProviderInterface $userProvider)
+        UserProviderInterface $userProvider,
+        Security $security)
     {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
         $this->validator = $validator;
         $this->userAuthenticator = $userAuthenticator;
         $this->userProvider = $userProvider;
+        $this->security = $security;
         $this->user = $this->entityManager->getRepository('UserBundle:User');
     }
 
@@ -82,6 +86,7 @@ class SecurityController extends AbstractController
      */
     public function registration(Request $request)
     {
+        $authorizedUser = $this->security->getUser();
         $form = $this->createForm(RegistrationType::class);
         $form->add('submit', SubmitType::class);
         $form->handleRequest($request);
@@ -114,8 +119,12 @@ class SecurityController extends AbstractController
                     $entityManager->persist($userRegistration);
                     $entityManager->flush();
 
-                    $this->addFlash('successful', 'Registration was successful, please log in');
+                    if (isset($authorizedUser)) {
+                        $this->addFlash('successful', 'New user successful registered');
+                        return $this->redirectToRoute('app_registration');
+                    }
 
+                    $this->addFlash('successful', 'Registration was successful, please log in');
                     return $this->redirectToRoute('app_login');
                 }
 

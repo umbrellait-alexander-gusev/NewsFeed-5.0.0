@@ -135,6 +135,7 @@ class AdminNewsController extends AbstractController
         $categories = $this->category->findAll();
 
         $categoryChoices = new ArrayObject();
+
         foreach ($categories as $category) {
             $categoryChoices->offsetSet($category->getName(), $category->getId());
         }

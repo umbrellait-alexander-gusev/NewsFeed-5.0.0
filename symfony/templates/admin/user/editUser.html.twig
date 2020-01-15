@@ -1,7 +1,7 @@
-{% extends 'layout.html.twig' %}
+{% extends 'admin/layout.html.twig' %}
 
 {% block title %}
-    User dashboard
+    Edit user
 {% endblock %}
 
 {% block stylesheets %}
@@ -34,10 +34,12 @@
     </style>
 {% endblock %}
 
-{% block body %}
-    <div class="wrapper w-100 h-auto bg-white p-5 border-bottom border-dark d-flex flex-column justify-content-start">
+{% block content %}
+    <a href="{{ path( 'admin_user_list' ) }}" class="btn btn-outline-secondary ml-auto mr-3">Cancel</a>
+
+    <div class="wrapper w-100 bg-white p-5 border-bottom border-dark d-flex flex-column justify-content-end">
         <h1 class="text-center">
-            <span class="welcome-text">User dashboard</span>
+            <span class="welcome-text">Edit user</span>
         </h1>
     </div>
 
@@ -56,35 +58,44 @@
 
         <div class="container">
             <div class="row d-flex flex-wrap justify-content-center align-items-center p-4 text-white">
-                {{ form_start(registrationForm) }}
+                {{ form_start(userForm) }}
                     <div class="form-group">
                         <div class="form-row">
                             <div class="col">
-                                {{ form_label(registrationForm.firstName, 'First Name') }}
-                                {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'First Name'}}) }}
+                                {{ form_label(userForm.firstName, 'First Name') }}
+                                {{ form_widget(userForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'First Name'}}) }}
 
                             </div>
 
                             <div class="col">
-                                {{ form_label(registrationForm.lastName, 'Last Name') }}
-                                {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Last Name'}}) }}
+                                {{ form_label(userForm.lastName, 'Last Name') }}
+                                {{ form_widget(userForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Last Name'}}) }}
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                    {{ form_label(registrationForm.email, 'Email') }}
+                        <div class="form-row">
+                            <div class="col">
+                                {{ form_label(userForm.email, 'Email') }}
 
-                    {% if error is same as(false) %}
-                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+                                {% if error is same as(false) %}
+                                    {{ form_widget(userForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
 
-                    {% elseif error is same as(true) %}
-                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control is-invalid', 'placeholder': 'Email'}}) }}
-                        <div class="invalid-feedback">
-                            Invalid email address
+                                {% elseif error is same as(true) %}
+                                    {{ form_widget(userForm.email, {'attr': {'class': 'form-control is-invalid', 'placeholder': 'Email'}}) }}
+                                    <div class="invalid-feedback">
+                                        Invalid email address
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col">
+                                {{ form_label(userForm.roles, 'Roles') }}
+                                {{ form_widget(userForm.roles, {'attr': {'class': 'form-control'}}) }}
+                            </div>
                         </div>
-                    {% endif %}
-                </div>
+                    </div>
 
                     <div class="form-group password-group">
                         <div class="form-row">
@@ -121,25 +132,10 @@
                     <small class="form-text text-white"><span class="required"></span> - required fields</small>
 
                     <div class="form-group mt-5 text-center">
-                        {{ form_label(registrationForm.save) }}
-                        {{ form_widget(registrationForm.save, {'attr': {'class': 'btn btn-primary'}}) }}
+                        {{ form_label(userForm.save) }}
+                        {{ form_widget(userForm.save, {'attr': {'class': 'btn btn-primary'}}) }}
                     </div>
-                {{ form_end(registrationForm) }}
-            </div>
-        </div>
-
-        <div class="container mt-4">
-            <h3 class="mb-5 text-center text-light">Your comments</h3>
-
-            <div class="container">
-                {% if comments|length > 0 %}
-                    {{ block("comments", "user/userCommentList.html.twig") }}
-
-                {% else %}
-                    <div class="row d-flex flex-wrap justify-content-center align-items-center border-top p-4">
-                        <p>You have not written any comments yet</p>
-                    </div>
-                {% endif %}
+                {{ form_end(userForm) }}
             </div>
         </div>
     </div>
@@ -163,7 +159,7 @@
                         $passwordGroup.find('.invalid-feedback').addClass('hide');
                     }
                 }
-            })
+            });
         })(jQuery)
     </script>
 {% endblock %}

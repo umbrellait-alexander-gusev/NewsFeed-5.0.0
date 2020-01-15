@@ -42,7 +42,7 @@
             {% for label, messages in app.session.flashbag.all %}
                 {% for message in messages %}
                     <div class="container mt-3">
-                        <div class="w-100 text-center mb-3 mx-auto alert alert-danger" role="alert">
+                        <div class="w-100 text-center mb-3 mx-auto alert {% if label == 'danger' %}alert-danger{% else %}alert-success{% endif %}" role="alert">
                             {{ message }}
                         </div>
                     </div>
