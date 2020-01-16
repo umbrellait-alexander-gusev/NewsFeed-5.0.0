@@ -12,9 +12,9 @@ class UserDashboardType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email')
-            ->add('firstName')
-            ->add('lastName');
+        ->add('email')
+        ->add('firstName')
+        ->add('lastName');
     }
 
     public function configureOptions(OptionsResolver $resolver)

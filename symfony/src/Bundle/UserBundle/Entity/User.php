@@ -2,6 +2,8 @@
 
 namespace App\Bundle\UserBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -23,9 +25,20 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="json")
+     * @var Collection|Role[]
+     * @ORM\ManyToMany(targetEntity="Role")
+     * @ORM\JoinTable(
+     *      name="user_role",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")}
+     * )
      */
-    private $roles = [];
+    private $roles;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
 
     /**
      * @var string The hashed password
@@ -75,18 +88,14 @@ class User implements UserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this->roles->map(function($role) {
+            return $role->getRole();
+        })->toArray();
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(Collection $roles)
     {
         $this->roles = $roles;
-
-        return $this;
     }
 
     /**
