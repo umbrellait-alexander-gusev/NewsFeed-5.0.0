@@ -75,26 +75,17 @@
                     </div>
 
                     <div class="form-group">
-                        <div class="form-row">
-                            <div class="col">
-                                {{ form_label(userForm.email, 'Email') }}
+                        {{ form_label(userForm.email, 'Email') }}
 
-                                {% if error is same as(false) %}
-                                    {{ form_widget(userForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+                        {% if error is same as(false) %}
+                            {{ form_widget(userForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
 
-                                {% elseif error is same as(true) %}
-                                    {{ form_widget(userForm.email, {'attr': {'class': 'form-control is-invalid', 'placeholder': 'Email'}}) }}
-                                    <div class="invalid-feedback">
-                                        Invalid email address
-                                    </div>
-                                {% endif %}
+                        {% elseif error is same as(true) %}
+                            {{ form_widget(userForm.email, {'attr': {'class': 'form-control is-invalid', 'placeholder': 'Email'}}) }}
+                            <div class="invalid-feedback">
+                                Invalid email address
                             </div>
-
-                            <div class="col">
-                                {{ form_label(userForm.roles, 'Roles') }}
-                                {{ form_widget(userForm.roles, {'attr': {'class': 'form-control'}}) }}
-                            </div>
-                        </div>
+                        {% endif %}
                     </div>
 
                     <div class="form-group password-group">

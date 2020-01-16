@@ -2,14 +2,11 @@
 
 namespace App\Bundle\AdminBundle\Controller;
 
-use ArrayObject;
 use App\Bundle\UserBundle\Form\UserDashboardType;
 use App\Bundle\UserBundle\Security\UserAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use PhpParser\Node\Expr\Cast\Object_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -81,7 +78,6 @@ class AdminUserController extends AbstractController
                 'userEmail' => $user->getEmail(),
             ];
 
-
             $userFirstName = $user->getFirstName();
             $userLastName = $user->getLastName();
             $userFullName = $userFirstName . ' ' . $userLastName;
@@ -121,54 +117,22 @@ class AdminUserController extends AbstractController
      */
     public function editUser(Request $request, $id)
     {
-        $user = $this->user->findById($id);
+        $user = $this->user->findOneBy(['id' => $id]);
+
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
 
-        $user = $user[0];
-
-        $userRoles = $user->getRoles();
-        $flipUserRole = array_flip($userRoles);
-
-        $userRoleIsAdmin = false;
-        if (array_key_exists('ROLE_ADMIN', $flipUserRole)) {
-            $userRoleIsAdmin = true;
-        }
-
         $userOldEmail = $user->getEmail();
-        $userRolesChoices = new ArrayObject();
-
-        $userRolesChoices->offsetSet('No Role', null);
-        $userRolesChoices->offsetSet('Admin', 1);
-
-        $rolesList = ['choices' => $userRolesChoices];
 
         $form = $this->createForm(UserDashboardType::class, $user);
-        $form->add('roles', ChoiceType::class, $rolesList);
         $form->add('save', SubmitType::class);
-
-        if (count($request->request) === 0) {
-            $form->handleRequest($request);
-
-        } else {
-            $userDataForm = $request->request->get('user_dashboard');
-
-            if ($userDataForm['roles'] === '1') {
-                $userDataForm['roles'] = ['ROLE_ADMIN'];
-            } else {
-                $userDataForm['roles'] = [];
-            }
-
-            $request->request->set('user_dashboard', $userDataForm);
-            $form->handleRequest($request);
-        }
+        $form->handleRequest($request);
 
         $errorEmailValidation = false;
         $emailConstraint = new Assert\Email();
 
-//        if ($form->isSubmitted() && $form->isValid()) {
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $userInfoUpdate = $form->getData();
             $userNewEmail = $userInfoUpdate->getEmail();
 
@@ -207,10 +171,6 @@ class AdminUserController extends AbstractController
                 }
             } else {
                 if (0 === count($errorsValidate)) {
-                    $userDataForm = $request->request->get('user_dashboard');
-
-                    $userInfoUpdate->setRoles($userDataForm['roles']);
-
                     $entityManager = $this->getDoctrine()->getManager();
                     $entityManager->persist($userInfoUpdate);
                     $entityManager->flush();
