@@ -1,0 +1,12 @@
+{% extends 'email/layout.html.twig' %}
+
+{% block header %}
+    <p>Successful Registration</p>
+    <hr>
+{% endblock %}
+
+{% block body %}
+    <p>Welcome on site <span class="text-primary">{{ userName }}</span></p>
+    <p>You have successfully registered on the site</p>
+    <hr>
+{% endblock %}

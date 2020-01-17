@@ -16,6 +16,10 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Bundle\EmailBundle\Service\EmailService;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class SecurityController extends AbstractController
 {
@@ -26,6 +30,7 @@ class SecurityController extends AbstractController
     private $userProvider;
     private $security;
     private $user;
+    private $mailService;
 
     /**
      * Class constructor
@@ -34,6 +39,8 @@ class SecurityController extends AbstractController
      * @param ValidatorInterface $validator
      * @param UserAuthenticator $userAuthenticator
      * @param UserProviderInterface $userProvider
+     * @param Security $security
+     * @param EmailService $mailService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -41,7 +48,8 @@ class SecurityController extends AbstractController
         ValidatorInterface $validator,
         UserAuthenticator $userAuthenticator,
         UserProviderInterface $userProvider,
-        Security $security)
+        Security $security,
+        EmailService $mailService)
     {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
@@ -49,6 +57,7 @@ class SecurityController extends AbstractController
         $this->userAuthenticator = $userAuthenticator;
         $this->userProvider = $userProvider;
         $this->security = $security;
+        $this->mailService = $mailService;
         $this->user = $this->entityManager->getRepository('UserBundle:User');
     }
 
@@ -82,6 +91,9 @@ class SecurityController extends AbstractController
     /**
      * @Route("/registration", name="app_registration")
      * @param Request $request
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      * @return Response
      */
     public function registration(Request $request)
@@ -122,6 +134,19 @@ class SecurityController extends AbstractController
                     if (isset($authorizedUser)) {
                         $this->addFlash('successful', 'New user successful registered');
                         return $this->redirectToRoute('app_registration');
+                    }
+
+                    if ($authorizedUser) {
+                        $firstName = $authorizedUser->getFirstName();
+                        $LastName = $authorizedUser->getLastName();
+                        $userEmail = $authorizedUser->getEmail();
+                        $userName = $userEmail;
+
+                        if ($firstName !== '' || $LastName !== '') {
+                            $userName = $firstName . ' ' . $LastName;
+                        }
+
+                        $this->mailService->sendSuccessfulRegistration($userName, $userEmail);
                     }
 
                     $this->addFlash('successful', 'Registration was successful, please log in');
