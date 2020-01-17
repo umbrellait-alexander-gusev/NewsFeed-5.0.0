@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta http-equiv="Content-Type" content="text/html charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <title>{% block title %}{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ asset('libs/bootstrap-4.3.1/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('libs/fontawesome-5.12.0/css/all.min.css') }}">
+
+    {% block stylesheets %}
+        <style type="text/css">
+            p {
+                text-align: center;
+                font-size: 25px;
+            }
+
+            table {
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            .text-primary {
+                color: lightskyblue;
+            }
+        </style>
+    {% endblock %}
+</head>
+
+<body>
+<table>
+    <thead>
+    <tr>
+        <td>{% block header %}{% endblock %}</td>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr>
+        <td>{% block body %}{% endblock %}</td>
+    </tr>
+    </tbody>
+</table>
+
+<script src="{{ asset('libs/jquery-3.4.1/jquery.min.js') }}"></script>
+<script src="{{ asset('libs/bootstrap-4.3.1/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('libs/fontawesome-5.12.0/js/all.min.js') }}"></script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

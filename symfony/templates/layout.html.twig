@@ -1,99 +1,104 @@
 <!DOCTYPE html>
-<html class="h-100">
-    <head>
-        <meta charset="UTF-8"/>
-        <title>{% block title %}{% endblock %}</title>
-        <link rel="stylesheet" href="{{ asset('libs/bootstrap-4.3.1/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('libs/fontawesome-5.12.0/css/all.min.css') }}">
-        {% block stylesheets %}{% endblock %}
-    </head>
+<html lang="ru" class="h-100">
+<head>
+    <meta http-equiv="Content-Type" content="text/html charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
-    <body class="h-100 bg-light">
-        <div id="wrapper-content" class="h-100 d-flex flex-column justify-content-between">
-            <header>
-                <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
-                    <a class="navbar-brand m-0" href="{{ path('home') }}">
-                        <h2 class="text-warning font-weight-bold p-0 m-0">News feed</h2>
-                    </a>
+    <title>{% block title %}{% endblock %}</title>
 
-                    <button class="navbar-toggler"
-                            type="button"
-                            data-toggle="collapse"
-                            data-target="#navbarNavDropdown"
-                            aria-controls="navbarNavDropdown"
-                            aria-expanded="false"
-                            aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                        <ul class="navbar-nav mr-0 ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link text-warning" href="{{ path('home') }}">Home</a>
-                            </li>
+    <link rel="stylesheet" href="{{ asset('libs/bootstrap-4.3.1/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('libs/fontawesome-5.12.0/css/all.min.css') }}">
 
-                            <li class="nav-item">
-                                <a class="nav-link text-warning" href="{{ path('news') }}">News List</a>
-                            </li>
+    {% block stylesheets %}{% endblock %}
+</head>
 
-                            {% if is_granted('IS_AUTHENTICATED_FULLY') == 'true' %}
-                                <li class="d-flex justify-content-center align-items-center text-light">|</li>
+<body class="h-100 bg-light">
+<div id="wrapper-content" class="h-100 d-flex flex-column justify-content-between">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
+            <a class="navbar-brand m-0" href="{{ path('home') }}">
+                <h2 class="text-warning font-weight-bold p-0 m-0">News feed</h2>
+            </a>
 
-                                <li class="nav-item d-flex justify-content-center align-items-center">
-                                    <a class="nav-link text-light" href="{{ path('user_dashboard') }}">
-                                        <span class="px-1 text-light">Welcome: </span>
+            <button class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbarNavDropdown"
+                    aria-controls="navbarNavDropdown"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav mr-0 ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="{{ path('home') }}">Home</a>
+                    </li>
 
-                                        {% if app.user.firstName == '' and app.user.lastName == '' %}
-                                            <span class="px-1 text-light">{{ app.user.email }}</span>
-                                        {% else %}
-                                            <span class="px-1 text-light">{{ app.user.firstName }}</span>
-                                            <span class="px-1 text-light">{{ app.user.lastName }}</span>
-                                        {% endif %}
-                                    </a>
-                                </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="{{ path('news') }}">News List</a>
+                    </li>
 
-                                <li class="d-flex justify-content-center align-items-center text-light">|</li>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') == 'true' %}
+                        <li class="d-flex justify-content-center align-items-center text-light">|</li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link text-success" href="{{ path('app_logout') }}">Log out</a>
-                                </li>
+                        <li class="nav-item d-flex justify-content-center align-items-center">
+                            <a class="nav-link text-light" href="{{ path('user_dashboard') }}">
+                                <span class="px-1 text-light">Welcome: </span>
 
-                            {% else %}
-                                <li class="d-flex justify-content-center align-items-center text-light">|</li>
+                                {% if app.user.firstName == '' and app.user.lastName == '' %}
+                                    <span class="px-1 text-light">{{ app.user.email }}</span>
+                                {% else %}
+                                    <span class="px-1 text-light">{{ app.user.firstName }}</span>
+                                    <span class="px-1 text-light">{{ app.user.lastName }}</span>
+                                {% endif %}
+                            </a>
+                        </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link text-success" href="{{ path('app_login') }}">Log in</a>
-                                </li>
+                        <li class="d-flex justify-content-center align-items-center text-light">|</li>
 
-                                <li class="d-flex justify-content-center align-items-center text-light">or</li>
+                        <li class="nav-item">
+                            <a class="nav-link text-success" href="{{ path('app_logout') }}">Log out</a>
+                        </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link text-success" href="{{ path('app_registration') }}">Registration</a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </nav>
-            </header>
+                    {% else %}
+                        <li class="d-flex justify-content-center align-items-center text-light">|</li>
 
-            {% block body %}{% endblock %}
+                        <li class="nav-item">
+                            <a class="nav-link text-success" href="{{ path('app_login') }}">Log in</a>
+                        </li>
 
-            <footer class="navbar navbar-light bg-dark d-flex justify-content-center">
-                <div class="wrapper-footer w-100 text-center">
+                        <li class="d-flex justify-content-center align-items-center text-light">or</li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-success" href="{{ path('app_registration') }}">Registration</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    {% block body %}{% endblock %}
+
+    <footer class="navbar navbar-light bg-dark d-flex justify-content-center">
+        <div class="wrapper-footer w-100 text-center">
                   <span class="navbar-text text-white font-weight-bold mr-2">
                     &copy; 2019 Copyright:
                   </span>
 
-                    <a class="text-primary navbar-text font-weight-bold"
-                       href="https://vk.com/gusev_alexandr_vladimirovich/">
-                        AlexanderWeb
-                    </a>
-                </div>
-            </footer>
+            <a class="text-primary navbar-text font-weight-bold"
+               href="https://vk.com/gusev_alexandr_vladimirovich/">
+                AlexanderWeb
+            </a>
         </div>
+    </footer>
+</div>
 
-        <script src="{{ asset('libs/jquery-3.4.1/jquery.min.js') }}" ></script>
-        <script src="{{ asset('libs/bootstrap-4.3.1/js/bootstrap.min.js') }}" ></script>
-        <script src="{{ asset('libs/fontawesome-5.12.0/js/all.min.js') }}" ></script>
-        {% block javascripts %}{% endblock %}
-    </body>
+<script src="{{ asset('libs/jquery-3.4.1/jquery.min.js') }}"></script>
+<script src="{{ asset('libs/bootstrap-4.3.1/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('libs/fontawesome-5.12.0/js/all.min.js') }}"></script>
+{% block javascripts %}{% endblock %}
+</body>
 </html>

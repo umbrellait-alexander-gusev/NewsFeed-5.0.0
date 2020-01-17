@@ -229,6 +229,6 @@ class AdminNewsController extends AbstractController
         $entityManager->persist($newsById);
         $entityManager->flush();
 
-        return new JsonResponse(['News active' => 'Successful']);
+        return new JsonResponse(['Successful']);
     }
 }

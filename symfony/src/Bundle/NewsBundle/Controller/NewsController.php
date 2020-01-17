@@ -250,6 +250,6 @@ class NewsController extends AbstractController
             $entityManager->flush();
         }
 
-        return new JsonResponse(['like comment' => 'Successful']);
+        return new JsonResponse(['Successful']);
     }
 }
