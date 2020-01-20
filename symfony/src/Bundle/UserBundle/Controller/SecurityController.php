@@ -13,6 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -29,6 +31,7 @@ class SecurityController extends AbstractController
     private $userAuthenticator;
     private $userProvider;
     private $security;
+    private $csrfTokenManager;
     private $user;
     private $mailService;
 
@@ -49,7 +52,8 @@ class SecurityController extends AbstractController
         UserAuthenticator $userAuthenticator,
         UserProviderInterface $userProvider,
         Security $security,
-        EmailService $mailService)
+        EmailService $mailService,
+        CsrfTokenManagerInterface $csrfTokenManager)
     {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
@@ -58,6 +62,7 @@ class SecurityController extends AbstractController
         $this->userProvider = $userProvider;
         $this->security = $security;
         $this->mailService = $mailService;
+        $this->csrfTokenManager = $csrfTokenManager;
         $this->user = $this->entityManager->getRepository('UserBundle:User');
     }
 
@@ -111,6 +116,10 @@ class SecurityController extends AbstractController
             $email = $userRegistration->getEmail();
             $password = $userRegistration->getPassword();
             $getUserByEmail = $this->user->getUserByEmail($email);
+            $credentials = $request->request->get('registration')['_token'];
+
+            $token = new CsrfToken('authenticate_user', $credentials);
+
 
             $errorsValidate = $this->validator->validate(
                 $email,
@@ -122,6 +131,8 @@ class SecurityController extends AbstractController
                 $password
             ));
 
+            $userRegistration->setVerificationUser(0);
+
             if (0 === count($errorsValidate)) {
                 if (count($getUserByEmail) > 0) {
                     $this->addFlash('danger', 'A user with this mail already exists');
@@ -131,22 +142,20 @@ class SecurityController extends AbstractController
                     $entityManager->persist($userRegistration);
                     $entityManager->flush();
 
+                    $firstName = $userRegistration->getFirstName();
+                    $LastName = $userRegistration->getLastName();
+                    $userEmail = $userRegistration->getEmail();
+                    $userName = $userEmail;
+
+                    if ($firstName !== '' || $LastName !== '') {
+                        $userName = $firstName . ' ' . $LastName;
+                    }
+
+                    $this->mailService->sendSuccessfulRegistration($userName, $userEmail);
+
                     if (isset($authorizedUser)) {
                         $this->addFlash('successful', 'New user successful registered');
                         return $this->redirectToRoute('app_registration');
-                    }
-
-                    if ($authorizedUser) {
-                        $firstName = $authorizedUser->getFirstName();
-                        $LastName = $authorizedUser->getLastName();
-                        $userEmail = $authorizedUser->getEmail();
-                        $userName = $userEmail;
-
-                        if ($firstName !== '' || $LastName !== '') {
-                            $userName = $firstName . ' ' . $LastName;
-                        }
-
-                        $this->mailService->sendSuccessfulRegistration($userName, $userEmail);
                     }
 
                     $this->addFlash('successful', 'Registration was successful, please log in');

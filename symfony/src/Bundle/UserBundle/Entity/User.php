@@ -56,6 +56,12 @@ class User implements UserInterface
      */
     private $lastName;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default": false})
+     */
+
+    private $verificationUser;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -150,6 +156,18 @@ class User implements UserInterface
     public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getVerificationUser(): ?bool
+    {
+        return $this->verificationUser;
+    }
+
+    public function setVerificationUser(?bool $verificationUser): self
+    {
+        $this->verificationUser = $verificationUser;
 
         return $this;
     }
