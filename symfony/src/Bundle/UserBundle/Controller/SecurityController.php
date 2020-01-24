@@ -138,10 +138,14 @@ class SecurityController extends AbstractController
                     $this->addFlash('danger', 'A user with this mail already exists');
 
                 } else {
+                    $hostName = $request->getHost();
+                    $userRegistrationToken = $request->request->get('registration')['_token'];
+                    $userRegistration->setVerificationToken($userRegistrationToken);
                     $entityManager = $this->getDoctrine()->getManager();
                     $entityManager->persist($userRegistration);
                     $entityManager->flush();
 
+                    $userId = $userRegistration->getId();
                     $firstName = $userRegistration->getFirstName();
                     $LastName = $userRegistration->getLastName();
                     $userEmail = $userRegistration->getEmail();
@@ -151,7 +155,7 @@ class SecurityController extends AbstractController
                         $userName = $firstName . ' ' . $LastName;
                     }
 
-                    $this->mailService->sendSuccessfulRegistration($userName, $userEmail);
+                    $this->mailService->sendSuccessfulRegistration($userId, $userName, $userEmail, $hostName, $userRegistrationToken);
 
                     if (isset($authorizedUser)) {
                         $this->addFlash('successful', 'New user successful registered');

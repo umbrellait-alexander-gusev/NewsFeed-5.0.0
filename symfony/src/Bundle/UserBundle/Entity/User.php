@@ -62,6 +62,12 @@ class User implements UserInterface
 
     private $verificationUser;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+
+    private $verificationToken;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -168,6 +174,18 @@ class User implements UserInterface
     public function setVerificationUser(?bool $verificationUser): self
     {
         $this->verificationUser = $verificationUser;
+
+        return $this;
+    }
+
+    public function getVerificationToken(): ?string
+    {
+        return $this->verificationToken;
+    }
+
+    public function setVerificationToken(?string $verificationToken): self
+    {
+        $this->verificationToken = $verificationToken;
 
         return $this;
     }

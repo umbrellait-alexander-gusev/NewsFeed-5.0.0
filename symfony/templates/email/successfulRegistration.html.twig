@@ -6,7 +6,36 @@
 {% endblock %}
 
 {% block body %}
-    <p>Welcome on site <span class="text-primary">{{ userName }}</span></p>
-    <p>You have successfully registered on the site</p>
-    <hr>
+    <table>
+        <thead>
+        <tr>
+            <td>Welcome on site <span class="text-primary">{{ userName }}</span></td>
+        </tr>
+        <tr>
+            <td><br></td>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td>You have successfully registered on the site</td>
+        </tr>
+        <tr>
+            <td>Welcome on site <span class="text-primary">{{ userName }}</span></td>
+        </tr>
+        <tr>
+            <td>To activate your account, follow the link:
+                <a href="{{ hostName ~ '/login?user=' ~ userId ~ '&_token=' ~ userRegistrationToken }}">{{ hostName ~ '/=' ~ userRegistrationToken }}</a>
+            </td>
+        </tr>
+        <tr>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td>
+                <hr>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 {% endblock %}
