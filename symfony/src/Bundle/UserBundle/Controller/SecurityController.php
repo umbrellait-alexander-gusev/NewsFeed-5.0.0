@@ -5,6 +5,7 @@ namespace App\Bundle\UserBundle\Controller;
 use App\Bundle\UserBundle\Form\RegistrationType;
 use App\Bundle\UserBundle\Security\UserAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,8 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Csrf\CsrfToken;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -31,9 +30,9 @@ class SecurityController extends AbstractController
     private $userAuthenticator;
     private $userProvider;
     private $security;
-    private $csrfTokenManager;
     private $user;
     private $mailService;
+    private $simpleToken;
 
     /**
      * Class constructor
@@ -44,6 +43,7 @@ class SecurityController extends AbstractController
      * @param UserProviderInterface $userProvider
      * @param Security $security
      * @param EmailService $mailService
+     * @throws Exception
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -52,8 +52,7 @@ class SecurityController extends AbstractController
         UserAuthenticator $userAuthenticator,
         UserProviderInterface $userProvider,
         Security $security,
-        EmailService $mailService,
-        CsrfTokenManagerInterface $csrfTokenManager)
+        EmailService $mailService)
     {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
@@ -62,8 +61,8 @@ class SecurityController extends AbstractController
         $this->userProvider = $userProvider;
         $this->security = $security;
         $this->mailService = $mailService;
-        $this->csrfTokenManager = $csrfTokenManager;
         $this->user = $this->entityManager->getRepository('UserBundle:User');
+        $this->simpleToken = bin2hex(random_bytes(20));
     }
 
     /**
@@ -90,7 +89,7 @@ class SecurityController extends AbstractController
      */
     public function logout()
     {
-        throw new \Exception('This method can be blank - it will be intercepted by the logout key on your firewall');
+        throw new Exception('This method can be blank - it will be intercepted by the logout key on your firewall');
     }
 
     /**
@@ -116,10 +115,6 @@ class SecurityController extends AbstractController
             $email = $userRegistration->getEmail();
             $password = $userRegistration->getPassword();
             $getUserByEmail = $this->user->getUserByEmail($email);
-            $credentials = $request->request->get('registration')['_token'];
-
-            $token = new CsrfToken('authenticate_user', $credentials);
-
 
             $errorsValidate = $this->validator->validate(
                 $email,
@@ -139,11 +134,10 @@ class SecurityController extends AbstractController
 
                 } else {
                     $hostName = $request->getHost();
-                    $userRegistrationToken = $request->request->get('registration')['_token'];
+                    $userRegistrationToken = $this->simpleToken;
                     $userRegistration->setVerificationToken($userRegistrationToken);
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $entityManager->persist($userRegistration);
-                    $entityManager->flush();
+                    $this->entityManager->persist($userRegistration);
+                    $this->entityManager->flush();
 
                     $userId = $userRegistration->getId();
                     $firstName = $userRegistration->getFirstName();

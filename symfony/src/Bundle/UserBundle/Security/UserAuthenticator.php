@@ -6,6 +6,7 @@ use App\Bundle\UserBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -28,21 +29,48 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
     private $urlGenerator;
     private $csrfTokenManager;
     private $passwordEncoder;
+    private $user;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        UrlGeneratorInterface $urlGenerator,
+        CsrfTokenManagerInterface $csrfTokenManager,
+        UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->user = $this->entityManager->getRepository('UserBundle:User');
     }
 
+    /**
+     * @param Request $request
+     * @return bool
+     */
     public function supports(Request $request)
     {
+        if(count($_REQUEST) > 0 && array_key_exists("_verification_token", $_REQUEST)){
+            $verificationToken = $_REQUEST["_verification_token"];
+            if (isset($verificationToken) && $verificationToken !== '') {
+                $user = $this->user->findOneBy(['verificationToken' => $verificationToken]);
+
+                if ($user) {
+                    $user->setVerificationUser(true);
+                    $this->entityManager->persist($user);
+                    $this->entityManager->flush();
+                }
+            }
+        }
+
         return 'app_login' === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
 
+    /**
+     * @param Request $request
+     * @return array|mixed
+     */
     public function getCredentials(Request $request)
     {
         $credentials = [
@@ -50,6 +78,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
             'password' => $request->request->get('password'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
+
         $request->getSession()->set(
             Security::LAST_USERNAME,
             $credentials['email']
@@ -79,6 +108,11 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
         return $user;
     }
 
+    /**
+     * @param mixed $credentials
+     * @param UserInterface $user
+     * @return bool
+     */
     public function checkCredentials($credentials, UserInterface $user)
     {
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
@@ -86,12 +120,20 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.q
+     * @param $credentials
+     * @return string|null
      */
     public function getPassword($credentials): ?string
     {
         return $credentials['password'];
     }
 
+    /**
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param string $providerKey
+     * @return RedirectResponse|Response|null
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
