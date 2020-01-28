@@ -27,17 +27,23 @@ class EmailService
 
     /**
      * Send notification for User: Successful registration
+     * @param $userId
      * @param $userName
      * @param $userEmail
+     * @param $hostName
+     * @param $userRegistrationToken
      * @return JsonResponse
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function sendSuccessfulRegistration($userName, $userEmail)
+    public function sendSuccessfulRegistration($userId, $userName, $userEmail, $hostName, $userRegistrationToken)
     {
         $htmlContents = $this->twig->render('email/successfulRegistration.html.twig', [
-                'userName' => $userName
+                'userId' => $userId,
+                'userName' => $userName,
+                'hostName' => $hostName,
+                'userRegistrationToken' => $userRegistrationToken,
             ]
         );
 

@@ -5,6 +5,7 @@ namespace App\Bundle\UserBundle\Controller;
 use App\Bundle\UserBundle\Form\RegistrationType;
 use App\Bundle\UserBundle\Security\UserAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +32,7 @@ class SecurityController extends AbstractController
     private $security;
     private $user;
     private $mailService;
+    private $simpleToken;
 
     /**
      * Class constructor
@@ -41,6 +43,7 @@ class SecurityController extends AbstractController
      * @param UserProviderInterface $userProvider
      * @param Security $security
      * @param EmailService $mailService
+     * @throws Exception
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -59,6 +62,7 @@ class SecurityController extends AbstractController
         $this->security = $security;
         $this->mailService = $mailService;
         $this->user = $this->entityManager->getRepository('UserBundle:User');
+        $this->simpleToken = bin2hex(random_bytes(20));
     }
 
     /**
@@ -85,7 +89,7 @@ class SecurityController extends AbstractController
      */
     public function logout()
     {
-        throw new \Exception('This method can be blank - it will be intercepted by the logout key on your firewall');
+        throw new Exception('This method can be blank - it will be intercepted by the logout key on your firewall');
     }
 
     /**
@@ -122,31 +126,34 @@ class SecurityController extends AbstractController
                 $password
             ));
 
+            $userRegistration->setVerificationUser(0);
+
             if (0 === count($errorsValidate)) {
                 if (count($getUserByEmail) > 0) {
                     $this->addFlash('danger', 'A user with this mail already exists');
 
                 } else {
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $entityManager->persist($userRegistration);
-                    $entityManager->flush();
+                    $hostName = $request->getHost();
+                    $userRegistrationToken = $this->simpleToken;
+                    $userRegistration->setVerificationToken($userRegistrationToken);
+                    $this->entityManager->persist($userRegistration);
+                    $this->entityManager->flush();
+
+                    $userId = $userRegistration->getId();
+                    $firstName = $userRegistration->getFirstName();
+                    $LastName = $userRegistration->getLastName();
+                    $userEmail = $userRegistration->getEmail();
+                    $userName = $userEmail;
+
+                    if ($firstName !== '' || $LastName !== '') {
+                        $userName = $firstName . ' ' . $LastName;
+                    }
+
+                    $this->mailService->sendSuccessfulRegistration($userId, $userName, $userEmail, $hostName, $userRegistrationToken);
 
                     if (isset($authorizedUser)) {
                         $this->addFlash('successful', 'New user successful registered');
                         return $this->redirectToRoute('app_registration');
-                    }
-
-                    if ($authorizedUser) {
-                        $firstName = $authorizedUser->getFirstName();
-                        $LastName = $authorizedUser->getLastName();
-                        $userEmail = $authorizedUser->getEmail();
-                        $userName = $userEmail;
-
-                        if ($firstName !== '' || $LastName !== '') {
-                            $userName = $firstName . ' ' . $LastName;
-                        }
-
-                        $this->mailService->sendSuccessfulRegistration($userName, $userEmail);
                     }
 
                     $this->addFlash('successful', 'Registration was successful, please log in');
