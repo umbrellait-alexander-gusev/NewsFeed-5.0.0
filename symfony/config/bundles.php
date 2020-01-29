@@ -20,4 +20,5 @@ return [
     App\Bundle\UserBundle\UserBundle::class => ['all' => true],
     App\Bundle\EmailBundle\EmailBundle::class => ['all' => true],
     Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle::class => ['all' => true],
+    Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle::class => ['all' => true],
 ];
