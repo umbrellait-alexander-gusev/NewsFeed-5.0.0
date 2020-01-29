@@ -2,6 +2,7 @@
 
 namespace App\Bundle\EmailBundle\Service;
 
+use Firebase\JWT\JWT;
 use Swift_Mailer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Twig\{Environment, Error\LoaderError, Error\RuntimeError, Error\SyntaxError};
@@ -27,29 +28,30 @@ class EmailService
 
     /**
      * Send notification for User: Successful registration
-     * @param $userId
-     * @param $userName
-     * @param $userEmail
+     * @param $jwtToken
+     * @param $key
      * @param $hostName
-     * @param $userRegistrationToken
      * @return JsonResponse
      * @throws RuntimeError
      * @throws SyntaxError
      * @throws LoaderError
      */
-    public function sendSuccessfulRegistration($userId, $userName, $userEmail, $hostName, $userRegistrationToken)
+    public function sendSuccessfulRegistration($jwtToken, $key, $hostName)
     {
+        $decoded = JWT::decode($jwtToken, $key, array('HS256'));
+        $decodedArr = (array)$decoded;
+
         $htmlContents = $this->twig->render('email/successfulRegistration.html.twig', [
-                'userId' => $userId,
-                'userName' => $userName,
+                'userId' => $decodedArr['userId'],
+                'userName' => $decodedArr['userName'],
                 'hostName' => $hostName,
-                'userRegistrationToken' => $userRegistrationToken,
+                'userRegistrationToken' => $jwtToken,
             ]
         );
 
         $message = (new \Swift_Message('Successful registration on News feed'))
             ->setFrom('sgv89@mail.ru')
-            ->setTo($userEmail)
+            ->setTo($decodedArr['userEmail'])
             ->setBody(
                 $htmlContents,
                 'text/html'

@@ -6,10 +6,10 @@ use App\Bundle\UserBundle\Form\RegistrationType;
 use App\Bundle\UserBundle\Security\UserAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Firebase\JWT\JWT;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
@@ -18,9 +18,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Bundle\EmailBundle\Service\EmailService;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
+use Twig\Error\{LoaderError, RuntimeError, SyntaxError};
 
 class SecurityController extends AbstractController
 {
@@ -32,7 +30,6 @@ class SecurityController extends AbstractController
     private $security;
     private $user;
     private $mailService;
-    private $simpleToken;
 
     /**
      * Class constructor
@@ -43,7 +40,6 @@ class SecurityController extends AbstractController
      * @param UserProviderInterface $userProvider
      * @param Security $security
      * @param EmailService $mailService
-     * @throws Exception
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -62,7 +58,6 @@ class SecurityController extends AbstractController
         $this->security = $security;
         $this->mailService = $mailService;
         $this->user = $this->entityManager->getRepository('UserBundle:User');
-        $this->simpleToken = bin2hex(random_bytes(20));
     }
 
     /**
@@ -102,7 +97,6 @@ class SecurityController extends AbstractController
      */
     public function registration(Request $request)
     {
-        $authorizedUser = $this->security->getUser();
         $form = $this->createForm(RegistrationType::class);
         $form->add('submit', SubmitType::class);
         $form->handleRequest($request);
@@ -133,12 +127,6 @@ class SecurityController extends AbstractController
                     $this->addFlash('danger', 'A user with this mail already exists');
 
                 } else {
-                    $hostName = $request->getHost();
-                    $userRegistrationToken = $this->simpleToken;
-                    $userRegistration->setVerificationToken($userRegistrationToken);
-                    $this->entityManager->persist($userRegistration);
-                    $this->entityManager->flush();
-
                     $userId = $userRegistration->getId();
                     $firstName = $userRegistration->getFirstName();
                     $LastName = $userRegistration->getLastName();
@@ -149,7 +137,21 @@ class SecurityController extends AbstractController
                         $userName = $firstName . ' ' . $LastName;
                     }
 
-                    $this->mailService->sendSuccessfulRegistration($userId, $userName, $userEmail, $hostName, $userRegistrationToken);
+                    $key = $_SERVER["API_KEY"];
+                    $hostName = $request->getHost();
+                    $payload = array(
+                        "userId" => $userId,
+                        "userEmail" => $userEmail,
+                        "userName" => $userName,
+                    );
+
+                    $jwtToken = JWT::encode($payload, $key);
+
+                    $userRegistration->setVerificationToken($jwtToken);
+                    $this->entityManager->persist($userRegistration);
+                    $this->entityManager->flush();
+
+                    $this->mailService->sendSuccessfulRegistration($jwtToken, $key, $hostName);
 
                     if (isset($authorizedUser)) {
                         $this->addFlash('successful', 'New user successful registered');

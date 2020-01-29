@@ -7,11 +7,8 @@ use ArrayObject;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\Extension\Core\Type\{ChoiceType, SubmitType};
+use Symfony\Component\HttpFoundation\{RedirectResponse, Request, Response};
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
